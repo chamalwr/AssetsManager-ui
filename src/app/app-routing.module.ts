@@ -14,6 +14,15 @@ const routes: Routes = [
   { 
     path: 'income-category',
     loadChildren: ()=> import('./income-category/income-category.module').then(m => m.IncomeCategoryModule)
+  },
+  {
+    path: 'pageNotFound',
+    loadChildren: ()=> import('./assests-manager-common/assests-manager-common.module').then(m => m.AssestsManagerCommonModule)
+  },
+  {
+    path: '**',
+    pathMatch: 'full',
+    redirectTo: 'pageNotFound'
   }
 ];
 
