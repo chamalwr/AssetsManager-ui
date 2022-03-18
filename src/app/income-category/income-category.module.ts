@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 
 import { IncomeCategoryRoutingModule } from './income-category-routing.module';
@@ -10,6 +11,7 @@ import { IncomeCategoryComponent } from './income-category.component';
     IncomeCategoryComponent
   ],
   imports: [
+    NgbModule,
     CommonModule,
     IncomeCategoryRoutingModule
   ],
