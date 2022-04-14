@@ -14,18 +14,14 @@ export class IncomeCategoryService implements OnDestroy {
     constructor(private readonly apolloClient: Apollo){}
 
     getAllIncomeCategories(userId: string){
-        return this.querySubscription = this.apolloClient.watchQuery<any>({
+        const incomeCategoriesSub = this.apolloClient.watchQuery<any>({
             query: GET_INCOME_CATEGORIES,
             variables: {
                 userId: userId
             }
-          })
-        .valueChanges
-        .subscribe(({ data, loading }) => {
-            this.loading = loading;
-            this.incomeCategories = data;
-            console.log(data);
         });
+
+        return incomeCategoriesSub.valueChanges;
     }
 
     getIncomeCategoryById(id: string){

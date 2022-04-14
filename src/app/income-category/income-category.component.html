@@ -1,3 +1,7 @@
+<div class="text-center" *ngIf="loading"> 
+    <div class="spinner-border" role="loading"></div>
+</div>
+
 <form>
     <div class="form-group form-inline">
         Search : 
@@ -15,11 +19,14 @@
       </thead>
 
       <tbody>
-        <tr>
-            <td> 1 </td>
-            <td> Freelancing </td>
-            <td> Working on fiver </td>
-            <td> Update | Delete </td>
+        <tr *ngFor="let incomeCategory of incomeCategories; index as i">
+            <td> {{ i + 1 }} </td>
+            <td> {{ incomeCategory.name }} </td>
+            <td> {{ incomeCategory.description }} </td>
+            <td>
+                <button type="button" class="btn btn-info">Update</button>
+                <button type="button" class="btn btn-warning">Delete</button>
+            </td>
         </tr>
       </tbody>
     

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import { IncomeCategoryService } from './income-category.service';
 
 @Component({
@@ -9,8 +10,11 @@ import { IncomeCategoryService } from './income-category.service';
 export class IncomeCategoryComponent implements OnInit {
 
   constructor(private readonly incomeCategoryService: IncomeCategoryService) { }
+  loading: boolean = true;
+  incomeCategories: any[] = [];
 
   ngOnInit(): void {
+    this.getAllIncomeCategories('chamalwr');
   }
 
   getIncomeCategoryById(id: string){
@@ -18,7 +22,23 @@ export class IncomeCategoryComponent implements OnInit {
   }
 
   getAllIncomeCategories(userId: string){
-    this.incomeCategoryService.getAllIncomeCategories(userId);
+    const data = this.incomeCategoryService.getAllIncomeCategories(userId);
+    data.subscribe(({ data, loading }) => {
+        if(loading === true){
+          this.loading = true;
+        }else {
+          console.log(data);
+          if(data.incomeCategories && data.incomeCategories[0]['__typename'] === 'IncomeCategory'){
+            this.incomeCategories = data.incomeCategories;
+            this.loading = false;
+          }else if (data.incomeCategories && data.incomeCategories[0]['__typename'] === 'IncomeCategoryResultError'){
+            
+            this.loading = false;
+          }else{
+
+          }
+        }
+    });
   }
 
   removeIncomeCategory(id: string){
