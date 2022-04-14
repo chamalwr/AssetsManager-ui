@@ -24,8 +24,8 @@
             <td> {{ incomeCategory.name }} </td>
             <td> {{ incomeCategory.description }} </td>
             <td>
-                <button type="button" class="btn btn-info">Update</button>
-                <button type="button" class="btn btn-warning">Delete</button>
+                <button type="button" class="btn btn-info" (click)="updateIncomeCategory(incomeCategory._id, incomeCategory)" >Update</button>
+                <button type="button" class="btn btn-warning" (click)="removeIncomeCategory(incomeCategory._id)">Delete</button>
             </td>
         </tr>
       </tbody>

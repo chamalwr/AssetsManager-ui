@@ -25,57 +25,41 @@ export class IncomeCategoryService implements OnDestroy {
     }
 
     getIncomeCategoryById(id: string){
-        this.apolloClient.watchQuery<any>({
+        const getIncomeCategory = this.apolloClient.watchQuery<any>({
             query: GET_INCOME_CATEGORY,
             variables: {
                 id: id
             }
-          })
-        .valueChanges
-        .subscribe(({ data, loading }) => {
-            this.loading = loading;
-            this.incomeCategories = data;
-            console.log(data);
-        });
+          });
+
+        return getIncomeCategory.valueChanges;
     }
 
     createIncomeCategory(createIncomeCategoryInput: any){
-        this.apolloClient.mutate({
+        return this.apolloClient.mutate({
             mutation: CREATE_INCOME_CATEGORY,
             variables: {
                 createIncomeCategoryInput: createIncomeCategoryInput,
             }
-        }).subscribe(({data}) => {
-            console.log(data);
-        }, (error) => {
-            console.log(error);
         });
     }
 
     updateIncomeCategory(id: string, updateIncomeCategoryInput: any){
-        this.apolloClient.mutate({
+        return this.apolloClient.mutate({
             mutation: UPDATE_INCOME_CATEGORY,
             variables: {
                 id: id,
                 updateIncomeCategoryInput: updateIncomeCategoryInput,
             }
-        }).subscribe(({data}) => {
-            console.log(data);
-        }, (error) => {
-            console.log(error);
         });
     }
 
     removeIncomeCategory(id: string){
-       this.apolloClient.mutate({
+       return this.apolloClient.mutate({
          mutation: DELETE_INCOME_CATEGORY,
          variables: {
              id: id
          }
-        }).subscribe(({data}) => {
-            console.log(data);
-        }, (error) => {
-            console.log(error)
         });
     }
 
