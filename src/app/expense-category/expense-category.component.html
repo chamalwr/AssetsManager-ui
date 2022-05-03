@@ -1,1 +1,43 @@
-<p>expense-category works!</p>
+<nav class="navbar navbar-light bg-light">
+    <span class="navbar-brand mb-1 h1">Expense Categories</span>
+</nav>
+
+
+<div class="text-center" *ngIf="loading"> 
+    <div class="spinner-border" role="loading"></div>
+</div>
+
+<button type="button" class="btn btn-primary" (click)="createExpenseCategory()">Add New</button>
+
+<form>
+    <div class="form-group form-inline">
+        Search : 
+    </div>
+  
+    <table class="table table-striped">
+      
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Category Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Actions</th>
+            </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let expenseCategory of expenseCategories; index as i">
+            <td> {{ i + 1 }} </td>
+            <td> {{ expenseCategory.name }} </td>
+            <td> {{ expenseCategory.description }} </td>
+            <td>
+                <button type="button" class="btn btn-info" (click)="updateExpenseCategory(expenseCategory._id)" >Update</button>
+                <button type="button" class="btn btn-warning" (click)="removeExpenseCategory(expenseCategory._id)">Delete</button>
+            </td>
+        </tr>
+      </tbody>
+    
+    </table>
+</form>
+
+<router-outlet></router-outlet>
