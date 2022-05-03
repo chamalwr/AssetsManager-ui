@@ -25,12 +25,14 @@ export class ExpenseCategoryService {
  }  
 
   getExpenseCategoryById(id: string){
-      return this.apolloClient.watchQuery<any>({
+      const expenseCategory = this.apolloClient.watchQuery<any>({
           query: GET_EXPENSE_CATEGORY,
           variables: {
               id: id
           }
       });
+
+      return expenseCategory.valueChanges;
   }
 
   createExpenseCategory(createExpenseCategoryInput: any){
