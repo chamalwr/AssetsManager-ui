@@ -11,10 +11,12 @@ import { IncomeCategoryModule } from './income-category/income-category.module';
 import { IncomeSheetModule } from './income-sheet/income-sheet.module';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ExpenseCategoryComponent } from './expense-category/expense-category.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ExpenseCategoryComponent
   ],
   imports: [
     BrowserModule,
