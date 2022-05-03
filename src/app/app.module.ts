@@ -10,6 +10,7 @@ import { HomeModule } from './home/home.module';
 import { IncomeCategoryModule } from './income-category/income-category.module';
 import { IncomeSheetModule } from './income-sheet/income-sheet.module';
 import { NgModule } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { NgModule } from '@angular/core';
     ToastrModule.forRoot(),
     NgbModule,
     BrowserAnimationsModule,
+    ReactiveFormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

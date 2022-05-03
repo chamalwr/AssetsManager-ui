@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { IncomeCategoryService } from './income-category.service';
 
@@ -11,7 +12,8 @@ export class IncomeCategoryComponent implements OnInit {
 
   constructor(private readonly incomeCategoryService: IncomeCategoryService,
               private readonly toastr: ToastrService,
-              private readonly changeDetectorRefs: ChangeDetectorRef) { }
+              private readonly changeDetectorRefs: ChangeDetectorRef,
+              private readonly route: Router,) { }
   loading: boolean = true;
   incomeCategories: any[] = [];
 
@@ -54,6 +56,7 @@ export class IncomeCategoryComponent implements OnInit {
           if(result.data.removeIncomeCategory && result.data.removeIncomeCategory['__typename'] === 'IncomeCategory'){
             this.loading = false;
             this.toastr.success(`Income Category ${result.data.removeIncomeCategory.name} is deleted`, 'Income category deleted')
+            window.location.reload();
           }else if (result.data.removeIncomeCategory && result.data.removeIncomeCategory['__typename'] === 'IncomeCategoryResultError') {
             this.loading = false;
             const errorModel = result.data.removeIncomeCategory;
@@ -71,12 +74,12 @@ export class IncomeCategoryComponent implements OnInit {
     });
   }
 
-  updateIncomeCategory(id: string, updateIncomeCategoryInput?: any){
-    this.incomeCategoryService.updateIncomeCategory(id, updateIncomeCategoryInput);
+  updateIncomeCategory(id: string, incomeCategory?: any){
+    this.route.navigateByUrl('/income-category/update-income-category', { state: { _id: id } });
   }
 
-  createIncomeCategory(createIncomeCategoryInput: any){
-    this.incomeCategoryService.createIncomeCategory(createIncomeCategoryInput);
+  createIncomeCategory(){
+    this.route.navigateByUrl('/income-category/add-income-category');
   }
 
 }

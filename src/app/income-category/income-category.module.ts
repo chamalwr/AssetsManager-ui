@@ -9,11 +9,16 @@ import { HttpClientModule } from '@angular/common/http';
 import { ApolloModule, APOLLO_OPTIONS, APOLLO_FLAGS } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { InMemoryCache } from '@apollo/client/core';
+import { AddIncomeCategoryComponent } from './components/add-income-category/add-income-category.component';
+import { UpdateIncomeCategoryComponent } from './components/update-income-category/update-income-category.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
   declarations: [
-    IncomeCategoryComponent
+    IncomeCategoryComponent,
+    AddIncomeCategoryComponent,
+    UpdateIncomeCategoryComponent
   ],
   imports: [
     NgbModule,
@@ -21,6 +26,8 @@ import { InMemoryCache } from '@apollo/client/core';
     IncomeCategoryRoutingModule,
     ApolloModule,
     HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [
     IncomeCategoryService,
@@ -36,7 +43,7 @@ import { InMemoryCache } from '@apollo/client/core';
         return {
           cache: new InMemoryCache(),
           link: httpLink.create({
-            uri: 'http://localhost:3000/graphql',
+            uri: 'http://44.203.46.92/graphql',
           }),
         };
       },
