@@ -5,6 +5,7 @@ import { ExpenseSheetRoutingModule } from './expense-sheet-routing.module';
 import { ExpenseSheetComponent } from './expense-sheet.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ExpenseSheetService } from './expense-sheet.service';
 
 
 @NgModule({
@@ -17,6 +18,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule
-  ]
+  ],
+  providers: [ExpenseSheetService]
 })
 export class ExpenseSheetModule { }
