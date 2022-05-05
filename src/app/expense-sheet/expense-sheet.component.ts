@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ViewType } from './enum/view-type.enum';
 
 @Component({
   selector: 'amgr-expense-sheet',
@@ -6,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./expense-sheet.component.scss']
 })
 export class ExpenseSheetComponent implements OnInit {
+  
+  currentView: ViewType = ViewType.ALL_VIEW;
 
   constructor() { }
 
