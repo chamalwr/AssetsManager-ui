@@ -48,7 +48,6 @@ export class ExpenseSheetAllViewComponent implements OnInit {
             this.toastr.error(`Something went wrong!, Cannot fetch all Expense Sheets`, 'Error')
           }
         }
-
       },
       error: (e) => {
         this.loading = false;
@@ -58,9 +57,8 @@ export class ExpenseSheetAllViewComponent implements OnInit {
   }
 
   deleteExpenseSheetConfirmation(id: string, content: any){
-    console.log(id);
     this.modalService.open(content, { centered: true, ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
-      console.log(`Clicked Ok! - Closed with: ${result}`);
+      this.deleteExpenseSheet(id);
     }, (reason) => {
       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
     });
@@ -76,7 +74,32 @@ export class ExpenseSheetAllViewComponent implements OnInit {
     }
   }
 
-  deleteExpenseSheet(id: string){
+  private deleteExpenseSheet(id: string){
+    const deletedExpenseSheet = this.expenseSheetService.deleteExpenseSheet(id);
+    deletedExpenseSheet.subscribe({
+      next: (result: any) => {
+        if(result.loading){
+          this.loading = true;
+        }else {
+          if(result.data.removeExpenseSheet && result.data.removeExpenseSheet['__typename'] === 'ExpenseSheet') {
+            this.loading = false;
+            window.location.reload();
+            this.toastr.success(`Expense Sheet for ${result.data.removeExpenseSheet.month}-${result.data.removeExpenseSheet.year} deleted!`, `Expense Sheet Deletion Success`);
+          }else if (result.data.removeExpenseSheet && result.data.removeExpenseSheet['__typename'] === 'ExpenseSheetResultError') {
+            const errorModel = result.data.removeExpenseSheet;
+            this.loading = false;
+            this.toastr.warning(errorModel.reason, errorModel.message);
+          }else {
+            this.loading = false;
+            this.toastr.error(`Something went wrong!, Cannot delete selected Expense sheet`, 'Error');
+          }
+        }
+      },
+      error: (e) => {
+        this.loading = false;
+        this.toastr.error(`Something went wrong!, Cannot delete selected Expense sheet`, 'Error');
+      }
+    })
   }
 
   search(text: string, pipe: PipeTransform) {
