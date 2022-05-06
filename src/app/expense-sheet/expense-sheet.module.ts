@@ -7,7 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ExpenseSheetSearchComponent } from './components/expense-sheet-search/expense-sheet-search.component';
 import { ExpenseSheetActionsComponent } from './components/expense-sheet-actions/expense-sheet-actions.component';
-import { NgbDatepickerModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbDatepickerModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ExpenseSheetAllViewComponent } from './components/expense-sheet-all-view/expense-sheet-all-view.component';
 import { ExpenseSheetSelectedViewComponent } from './components/expense-sheet-selected-view/expense-sheet-selected-view.component';
 
@@ -27,8 +27,8 @@ import { ExpenseSheetSelectedViewComponent } from './components/expense-sheet-se
     FormsModule,
     ReactiveFormsModule,
     NgbDatepickerModule,
-    NgbModule
+    NgbModule,
   ],
-  providers: [DecimalPipe]
+  providers: [DecimalPipe, NgbActiveModal]
 })
 export class ExpenseSheetModule { }

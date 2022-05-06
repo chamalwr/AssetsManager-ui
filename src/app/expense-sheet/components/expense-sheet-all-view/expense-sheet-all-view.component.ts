@@ -1,9 +1,8 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, OnInit, PipeTransform } from '@angular/core';
+import { Component, OnInit, PipeTransform, Type } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { ModalDismissReasons, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
 import { ExpenseSheetService } from 'src/app/assests-manager-common/service/expense-sheet.service';
 
 @Component({
@@ -16,16 +15,18 @@ export class ExpenseSheetAllViewComponent implements OnInit {
   expenseSheetsSummary$: any[] = [];
   filter = new FormControl('');
   loading: boolean = false;
+  closeResult = "";
 
   constructor(
     private expenseSheetService: ExpenseSheetService,
     private readonly toastr: ToastrService,
-    pipe: DecimalPipe) {
+    pipe: DecimalPipe,
+    private modalService: NgbModal,
+    public modal: NgbActiveModal) {
   }
-
+    
   ngOnInit(): void {
     this.getExpenseSheetSummary("chamalwr");
-    console.log(this.expenseSheetsSummary$);
   }
 
   getExpenseSheetSummary(userId: string){
@@ -54,6 +55,28 @@ export class ExpenseSheetAllViewComponent implements OnInit {
         this.toastr.error(`Something went wrong!, Cannot fetch all Expense Sheets`, 'Error')
       }
     })
+  }
+
+  deleteExpenseSheetConfirmation(id: string, content: any){
+    console.log(id);
+    this.modalService.open(content, { centered: true, ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+      console.log(`Clicked Ok! - Closed with: ${result}`);
+    }, (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+  }
+
+  private getDismissReason(reason: any): void {
+    if (reason === ModalDismissReasons.ESC) {
+      console.log('by pressing ESC');
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      console.log('by clicking on a backdrop')
+    } else {
+      console.log(`with: ${reason}`);
+    }
+  }
+
+  deleteExpenseSheet(id: string){
   }
 
   search(text: string, pipe: PipeTransform) {
