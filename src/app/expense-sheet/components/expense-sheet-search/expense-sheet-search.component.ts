@@ -1,20 +1,27 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
+import { SelectedPeriodEntity } from '../../entity/selected-period.entity';
 
 @Component({
   selector: 'amgr-expense-sheet-search',
   templateUrl: './expense-sheet-search.component.html',
   styleUrls: ['./expense-sheet-search.component.scss']
 })
-export class ExpenseSheetSearchComponent implements OnInit {
+export class ExpenseSheetSearchComponent implements OnInit, OnChanges {
 
   calenderModel!: NgbDateStruct;
-  
+  @Output() selectedMonthAndYearEvent = new EventEmitter<SelectedPeriodEntity>();
+  @Output() switchViewEvent = new EventEmitter<string>();
+
   constructor(private calendar: NgbCalendar, private readonly toastr: ToastrService) { }
 
   ngOnInit(): void {
   }
+
+  ngOnChanges(changes: SimpleChanges): void {
+  }
+
 
   selectToday() {
     this.calenderModel = this.calendar.getToday();
@@ -27,10 +34,11 @@ export class ExpenseSheetSearchComponent implements OnInit {
       const selectedMonth = this.calenderModel.month;
       const selectedYear = this.calenderModel.year;
       console.log(`User selected ${selectedMonth} Month and ${selectedYear} as year`);
+      this.selectedMonthAndYearEvent.emit({ month: selectedMonth, year: selectedYear });
     }
   }
 
-  getAll(){
-    //show new component and view all the expense sheets to userid on the same page itself
+  getAllView(viewName: string){
+    this.switchViewEvent.emit(viewName);
   }
 }

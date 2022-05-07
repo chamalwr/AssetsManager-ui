@@ -1,18 +1,50 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { SelectedPeriodEntity } from './entity/selected-period.entity';
 import { ViewType } from './enum/view-type.enum';
+import { DateTime } from "luxon";
 
 @Component({
   selector: 'amgr-expense-sheet',
   templateUrl: './expense-sheet.component.html',
   styleUrls: ['./expense-sheet.component.scss']
 })
-export class ExpenseSheetComponent implements OnInit {
+export class ExpenseSheetComponent implements OnInit, OnChanges {
   
-  currentView: ViewType = ViewType.ALL_VIEW;
+  currentView: ViewType = ViewType.SELECTED_VIEW;
+  selectedPeriod: SelectedPeriodEntity;
+  currentMonth: number;
+  currentYear: number;
 
-  constructor() { }
+  constructor() {
+    this.currentYear = DateTime.now().year;
+    this.currentMonth = DateTime.now().month;
+
+    this.selectedPeriod = {
+      month: this.currentMonth,
+      year: this.currentYear
+    }
+   }
 
   ngOnInit(): void {
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+  }
+
+  changeToAllView(event: any){
+    if(event && event === 'ALL_VIEW'){
+      if(this.currentView === ViewType.SELECTED_VIEW){
+        this.currentView = ViewType.ALL_VIEW
+      }
+    }
+  }
+
+  changeToSelectedView(event: SelectedPeriodEntity){
+    if(event){
+      console.log(event);
+      this.currentView = ViewType.SELECTED_VIEW;
+      this.selectedPeriod = event;
+    }
   }
 
 }

@@ -13,6 +13,7 @@ export const GET_EXPENSE_SHEETS = gql`
                 totalAmount
                 expenseRecords {
                     _id
+                    date
                     notes
                     amount
                     expenseCategory {
@@ -66,6 +67,7 @@ export const GET_EXPENSE_SHEET = gql`
                 year
                 expenseRecords {
                     _id
+                    date
                     notes
                     amount
                 }
@@ -98,6 +100,7 @@ export const GET_EXPENSE_SHEET_BY_MONTH_AND_YEAR = gql`
                 expenseRecords {
                     _id
                     notes
+                    date
                     amount
                     expenseCategory {
                         _id
@@ -129,6 +132,7 @@ export const GET_EXPENSE_SHEETS_BY_YEAR = gql`
                 totalAmount
                 expenseRecords {
                     _id
+                    date
                     notes
                     amount
                     expenseCategory {
@@ -162,6 +166,7 @@ export const CREATE_EXPENSE_SHEET = gql`
                 year
                 expenseRecords {
                     _id
+                    date
                     notes
                     amount
                 }
@@ -213,6 +218,7 @@ export const UPDATE_EXPENSE_SHEET = gql`
                 year
                 expenseRecords {
                     _id
+                    date
                     notes
                     amount
                 }

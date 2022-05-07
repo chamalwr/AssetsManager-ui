@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule, DecimalPipe } from '@angular/common';
+import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
 
 import { ExpenseSheetRoutingModule } from './expense-sheet-routing.module';
 import { ExpenseSheetComponent } from './expense-sheet.component';
@@ -29,6 +29,6 @@ import { ExpenseSheetSelectedViewComponent } from './components/expense-sheet-se
     NgbDatepickerModule,
     NgbModule,
   ],
-  providers: [DecimalPipe, NgbActiveModal]
+  providers: [DecimalPipe, CurrencyPipe, NgbActiveModal]
 })
 export class ExpenseSheetModule { }

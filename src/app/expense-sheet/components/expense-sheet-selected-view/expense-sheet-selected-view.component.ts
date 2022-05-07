@@ -1,15 +1,101 @@
-import { Component, OnInit } from '@angular/core';
+import { CurrencyPipe, DecimalPipe } from '@angular/common';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrService } from 'ngx-toastr';
+import { ExpenseSheetService } from 'src/app/assests-manager-common/service/expense-sheet.service';
+import { DateTime } from 'luxon';
 
 @Component({
   selector: 'amgr-expense-sheet-selected-view',
   templateUrl: './expense-sheet-selected-view.component.html',
   styleUrls: ['./expense-sheet-selected-view.component.scss']
 })
-export class ExpenseSheetSelectedViewComponent implements OnInit {
+export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
 
-  constructor() { }
+  @Input() selectedMonthAndYear: any;
+  expenseSheet!: any;
+  expenseRecords$: any[] = [];
+  filter = new FormControl('');
+  loading: boolean = false;
+  userId: string = "chamalwr";
+  currentSelectedMonth: number = DateTime.now().month;
+  currentSelectedYear: number = DateTime.now().year;
+  closeResult = "";
 
-  ngOnInit(): void {
+  constructor(
+    private expenseSheetService: ExpenseSheetService,
+    private readonly toastr: ToastrService,
+    private modalService: NgbModal,
+    public modal: NgbActiveModal,
+    currencyPipe: CurrencyPipe,
+    decimalPipe: DecimalPipe
+  ) { }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    //Change detected on Month and Year change
+    if(changes['selectedMonthAndYear']){
+      const changedValues = changes['selectedMonthAndYear'].currentValue;
+      console.log(changedValues);
+      if(changedValues.month !== this.currentSelectedMonth || changedValues.year !== this.currentSelectedYear){
+        this.getExpenseSheetForSelectedPeriod(this.userId, changedValues.month, changedValues.year, false);
+      }
+    }
   }
 
+  ngOnInit(): void {
+    if(this.selectedMonthAndYear){
+      this.getExpenseSheetForSelectedPeriod(this.userId, this.selectedMonthAndYear.month, this.selectedMonthAndYear.year, true);
+    }else {
+      this.getExpenseSheetForSelectedPeriod(this.userId, DateTime.now().month, DateTime.now().year, true);
+    }
+  }
+
+  getExpenseSheetForSelectedPeriod(userId: string, month: number, year: number, isFirstTime?: boolean){
+    const data = this.expenseSheetService.getExpenseSheetsByMonthAndYear(userId, month, year);
+    data.subscribe({
+      next:(result: any) => {
+        if(result.loading){
+          this.loading = true;
+        }else {
+          if(result.data.expeseSheetByMonthAndYear && result.data.expeseSheetByMonthAndYear['__typename'] === 'ExpenseSheet'){
+            this.expenseSheet = result.data.expeseSheetByMonthAndYear;
+            this.expenseRecords$ = result.data.expeseSheetByMonthAndYear.expenseRecords;
+            this.currentSelectedMonth = result.data.expeseSheetByMonthAndYear.month;
+            this.currentSelectedYear = result.data.expeseSheetByMonthAndYear.year;
+            this.loading = false;
+          }else if(result.data.expeseSheetByMonthAndYear && result.data.expeseSheetByMonthAndYear['__typename'] === 'ExpenseSheetResultError'){
+            if(isFirstTime){
+              const errorModel = result.data.expeseSheetByMonthAndYear;
+              this.loading = false;
+              this.toastr.warning(`Currently you don't have expense sheet created for this month`, errorModel.message);
+            }else {
+              const errorModel = result.data.expeseSheetByMonthAndYear;
+              this.loading = false;
+              this.toastr.warning(errorModel.reason, errorModel.message);
+            }
+            this.expenseRecords$ = [];
+            this.expenseSheet = {};
+            this.currentSelectedMonth = month;
+            this.currentSelectedYear = year;
+          }else{
+            this.expenseRecords$ = [];
+            this.expenseSheet = {};
+            this.currentSelectedMonth = month;
+            this.currentSelectedYear = year;
+            this.loading = false;
+            this.toastr.error(`Something went wrong!, Cannot fetch Expense Sheet for selected month and year`, 'Error')
+          }
+        }
+      },
+      error: (e) => {
+        this.expenseRecords$ = [];
+        this.expenseSheet = {};
+        this.currentSelectedMonth = month;
+        this.currentSelectedYear = year;
+        this.loading = false;
+        this.toastr.error(`Something went wrong!, Cannot fetch Expense Sheet for selected month and year`, 'Error')
+      }
+    });
+  }
 }
