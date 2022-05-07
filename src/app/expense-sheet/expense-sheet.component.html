@@ -4,19 +4,24 @@
 
 <amgr-expense-sheet-search 
     (selectedMonthAndYearEvent)="changeToSelectedView($event)" 
-    (switchViewEvent)="changeToAllView($event)">
+    (switchViewEvent)="changeToAllView($event)"
+>
 </amgr-expense-sheet-search>
 
 <hr>
 
-<amgr-expense-sheet-actions></amgr-expense-sheet-actions>
-<!-- If user loads month and year view - default component -->
-<!-- else user choose get all all the expnse sheets available to that user -->
+<amgr-expense-sheet-actions 
+    [isDeleteCurrentSheetDisabled]="deleteCurrentExpenseSheetButton">
+</amgr-expense-sheet-actions>
 
 <hr>
 
 <p *ngIf="currentView === 'SELECTED_VIEW'">
-    <amgr-expense-sheet-selected-view [selectedMonthAndYear]="selectedPeriod"></amgr-expense-sheet-selected-view>
+    <amgr-expense-sheet-selected-view 
+        [selectedMonthAndYear]="selectedPeriod" 
+        (isDeleteSheetButtonDisabled)="disableDeleteButton($event)"
+    >
+    </amgr-expense-sheet-selected-view>
 </p>
 
 <p *ngIf="currentView === 'ALL_VIEW'">

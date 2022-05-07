@@ -14,6 +14,7 @@ export class ExpenseSheetComponent implements OnInit, OnChanges {
   selectedPeriod: SelectedPeriodEntity;
   currentMonth: number;
   currentYear: number;
+  deleteCurrentExpenseSheetButton: boolean = false;
 
   constructor() {
     this.currentYear = DateTime.now().year;
@@ -35,6 +36,7 @@ export class ExpenseSheetComponent implements OnInit, OnChanges {
     if(event && event === 'ALL_VIEW'){
       if(this.currentView === ViewType.SELECTED_VIEW){
         this.currentView = ViewType.ALL_VIEW
+        this.deleteCurrentExpenseSheetButton = true;
       }
     }
   }
@@ -43,7 +45,12 @@ export class ExpenseSheetComponent implements OnInit, OnChanges {
     if(event){
       this.currentView = ViewType.SELECTED_VIEW;
       this.selectedPeriod = event;
+      this.deleteCurrentExpenseSheetButton = false;
     }
+  }
+
+  disableDeleteButton(status: boolean){
+    this.deleteCurrentExpenseSheetButton = status;
   }
 
 }

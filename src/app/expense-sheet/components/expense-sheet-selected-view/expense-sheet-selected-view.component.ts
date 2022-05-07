@@ -1,5 +1,5 @@
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -15,6 +15,9 @@ import { ExpenseRecordSummary } from '../../entity/expense-sheet-summary.entity'
 export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
 
   @Input() selectedMonthAndYear: any;
+  @Output() isDeleteSheetButtonDisabled = new EventEmitter<boolean>();
+  @Output() currentExpenseSheetInfo = new EventEmitter<object>(); //use when need to delete current sheet and other info might useful in future
+
   expenseSheet: ExpenseRecordSummary = {
     month: 'N/A',
     year: 'N/A',
@@ -22,11 +25,12 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
     totalIncome: '0.00'
   };
   expenseRecords$: any[] = [];
-  filter = new FormControl('');
   loading: boolean = false;
   userId: string = "chamalwr";
   currentSelectedMonth: number = DateTime.now().month;
   currentSelectedYear: number = DateTime.now().year;
+
+  filter = new FormControl('');
   closeResult = "";
 
   constructor(
@@ -80,10 +84,12 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
             if(isFirstTime){
               const errorModel = result.data.expeseSheetByMonthAndYear;
               this.loading = false;
+              this.isDeleteSheetButtonDisabled.emit(true);
               this.toastr.warning(`Currently you don't have expense sheet created for this month`, errorModel.message);
             }else {
               const errorModel = result.data.expeseSheetByMonthAndYear;
               this.loading = false;
+              this.isDeleteSheetButtonDisabled.emit(true);
               this.toastr.warning(errorModel.reason, errorModel.message);
             }
             //Reseting values
@@ -107,6 +113,7 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
             };
             this.currentSelectedMonth = month;
             this.currentSelectedYear = year;
+            this.isDeleteSheetButtonDisabled.emit(true);
             this.loading = false;
             this.toastr.error(`Something went wrong!, Cannot fetch Expense Sheet for selected month and year`, 'Error')
           }
@@ -123,6 +130,7 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
         };
         this.currentSelectedMonth = month;
         this.currentSelectedYear = year;
+        this.isDeleteSheetButtonDisabled.emit(false);
         this.loading = false;
         this.toastr.error(`Something went wrong!, Cannot fetch Expense Sheet for selected month and year`, 'Error')
       }
