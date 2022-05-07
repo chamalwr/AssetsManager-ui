@@ -41,7 +41,6 @@ export class ExpenseSheetComponent implements OnInit, OnChanges {
 
   changeToSelectedView(event: SelectedPeriodEntity){
     if(event){
-      console.log(event);
       this.currentView = ViewType.SELECTED_VIEW;
       this.selectedPeriod = event;
     }

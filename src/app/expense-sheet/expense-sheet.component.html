@@ -2,7 +2,10 @@
     <span class="navbar-brand mb-1 h1">My Expense Sheets</span>
 </nav>
 
-<amgr-expense-sheet-search (selectedMonthAndYearEvent)="changeToSelectedView($event)" (switchViewEvent)="changeToAllView($event)"></amgr-expense-sheet-search>
+<amgr-expense-sheet-search 
+    (selectedMonthAndYearEvent)="changeToSelectedView($event)" 
+    (switchViewEvent)="changeToAllView($event)">
+</amgr-expense-sheet-search>
 
 <hr>
 

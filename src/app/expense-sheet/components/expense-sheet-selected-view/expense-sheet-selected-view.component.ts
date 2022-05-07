@@ -5,6 +5,7 @@ import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { ExpenseSheetService } from 'src/app/assests-manager-common/service/expense-sheet.service';
 import { DateTime } from 'luxon';
+import { ExpenseRecordSummary } from '../../entity/expense-sheet-summary.entity';
 
 @Component({
   selector: 'amgr-expense-sheet-selected-view',
@@ -14,7 +15,12 @@ import { DateTime } from 'luxon';
 export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
 
   @Input() selectedMonthAndYear: any;
-  expenseSheet!: any;
+  expenseSheet: ExpenseRecordSummary = {
+    month: 'N/A',
+    year: 'N/A',
+    totalAmount: '0.00',
+    totalIncome: '0.00'
+  };
   expenseRecords$: any[] = [];
   filter = new FormControl('');
   loading: boolean = false;
@@ -36,7 +42,6 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
     //Change detected on Month and Year change
     if(changes['selectedMonthAndYear']){
       const changedValues = changes['selectedMonthAndYear'].currentValue;
-      console.log(changedValues);
       if(changedValues.month !== this.currentSelectedMonth || changedValues.year !== this.currentSelectedYear){
         this.getExpenseSheetForSelectedPeriod(this.userId, changedValues.month, changedValues.year, false);
       }
@@ -60,6 +65,13 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
         }else {
           if(result.data.expeseSheetByMonthAndYear && result.data.expeseSheetByMonthAndYear['__typename'] === 'ExpenseSheet'){
             this.expenseSheet = result.data.expeseSheetByMonthAndYear;
+            //Setting expense sheet data to the binding property
+            this.expenseSheet = {
+              month: this.expenseSheet.month,
+              year: this.expenseSheet.year,
+              totalAmount: this.expenseSheet.totalAmount,
+              totalIncome: '0.00'
+            }
             this.expenseRecords$ = result.data.expeseSheetByMonthAndYear.expenseRecords;
             this.currentSelectedMonth = result.data.expeseSheetByMonthAndYear.month;
             this.currentSelectedYear = result.data.expeseSheetByMonthAndYear.year;
@@ -74,13 +86,25 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
               this.loading = false;
               this.toastr.warning(errorModel.reason, errorModel.message);
             }
+            //Reseting values
             this.expenseRecords$ = [];
-            this.expenseSheet = {};
+            this.expenseSheet = {
+              month: 'N/A',
+              year: 'N/A',
+              totalAmount: '0.00',
+              totalIncome: '0.00'
+            };
             this.currentSelectedMonth = month;
             this.currentSelectedYear = year;
           }else{
+             //Reseting values
             this.expenseRecords$ = [];
-            this.expenseSheet = {};
+            this.expenseSheet = {
+              month: 'N/A',
+              year: 'N/A',
+              totalAmount: '0.00',
+              totalIncome: '0.00'
+            };
             this.currentSelectedMonth = month;
             this.currentSelectedYear = year;
             this.loading = false;
@@ -89,8 +113,14 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
         }
       },
       error: (e) => {
+         //Reseting values
         this.expenseRecords$ = [];
-        this.expenseSheet = {};
+        this.expenseSheet = {
+          month: 'N/A',
+          year: 'N/A',
+          totalAmount: '0.00',
+          totalIncome: '0.00'
+        };
         this.currentSelectedMonth = month;
         this.currentSelectedYear = year;
         this.loading = false;
