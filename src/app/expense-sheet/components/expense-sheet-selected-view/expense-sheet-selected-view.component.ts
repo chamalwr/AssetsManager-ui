@@ -16,7 +16,7 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
 
   @Input() selectedMonthAndYear: any;
   @Output() isDeleteSheetButtonDisabled = new EventEmitter<boolean>();
-  @Output() currentExpenseSheetInfo = new EventEmitter<object>(); //use when need to delete current sheet and other info might useful in future
+  @Output() currentExpenseSheetInfo = new EventEmitter<object>();
 
   expenseSheet: ExpenseRecordSummary = {
     month: 'N/A',
@@ -80,6 +80,7 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
             this.currentSelectedMonth = result.data.expeseSheetByMonthAndYear.month;
             this.currentSelectedYear = result.data.expeseSheetByMonthAndYear.year;
             this.loading = false;
+            this.currentExpenseSheetInfo.emit({expenseSheetId: result.data.expeseSheetByMonthAndYear._id});
           }else if(result.data.expeseSheetByMonthAndYear && result.data.expeseSheetByMonthAndYear['__typename'] === 'ExpenseSheetResultError'){
             if(isFirstTime){
               const errorModel = result.data.expeseSheetByMonthAndYear;
@@ -115,7 +116,7 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
             this.currentSelectedYear = year;
             this.isDeleteSheetButtonDisabled.emit(true);
             this.loading = false;
-            this.toastr.error(`Something went wrong!, Cannot fetch Expense Sheet for selected month and year`, 'Error')
+            this.toastr.error(`Something went wrong!, Cannot fetch Expense Sheet for selected month and year`, 'Error');
           }
         }
       },
@@ -132,7 +133,7 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
         this.currentSelectedYear = year;
         this.isDeleteSheetButtonDisabled.emit(false);
         this.loading = false;
-        this.toastr.error(`Something went wrong!, Cannot fetch Expense Sheet for selected month and year`, 'Error')
+        this.toastr.error(`Something went wrong!, Cannot fetch Expense Sheet for selected month and year`, 'Error');
       }
     });
   }

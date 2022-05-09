@@ -11,7 +11,9 @@
 <hr>
 
 <amgr-expense-sheet-actions 
-    [isDeleteCurrentSheetDisabled]="deleteCurrentExpenseSheetButton">
+    [isDeleteCurrentSheetDisabled]="deleteCurrentExpenseSheetButton"
+    [currentExpenseSheet]="currentlySelectedExpenseSheet"
+>
 </amgr-expense-sheet-actions>
 
 <hr>
@@ -20,6 +22,7 @@
     <amgr-expense-sheet-selected-view 
         [selectedMonthAndYear]="selectedPeriod" 
         (isDeleteSheetButtonDisabled)="disableDeleteButton($event)"
+        (currentExpenseSheetInfo)="getCurrentlySelectedExpenseSheetDetail($event)"
     >
     </amgr-expense-sheet-selected-view>
 </p>

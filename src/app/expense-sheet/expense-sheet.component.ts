@@ -15,6 +15,7 @@ export class ExpenseSheetComponent implements OnInit, OnChanges {
   currentMonth: number;
   currentYear: number;
   deleteCurrentExpenseSheetButton: boolean = false;
+  currentlySelectedExpenseSheet!: object;
 
   constructor() {
     this.currentYear = DateTime.now().year;
@@ -51,6 +52,12 @@ export class ExpenseSheetComponent implements OnInit, OnChanges {
 
   disableDeleteButton(status: boolean){
     this.deleteCurrentExpenseSheetButton = status;
+  }
+
+  getCurrentlySelectedExpenseSheetDetail(event: any){
+    if(event){
+      this.currentlySelectedExpenseSheet = event;
+    }
   }
 
 }
