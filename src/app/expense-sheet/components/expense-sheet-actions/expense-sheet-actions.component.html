@@ -1,6 +1,6 @@
 <button class="btn btn-primary" type="submit" (click)="addNew()">Create New</button>
 <button class="btn btn-primary" type="submit" [disabled]="isDeleteCurrentSheetDisabled" (click)="removeCurrentSheet(content)">Delete Current Sheet</button>
-
+<button class="btn btn-primary" type="submit" [disabled]="isDeleteCurrentSheetDisabled">Download Current Sheet</button>
 
 <ng-template #content let-modal>
     <div class="modal-header">
