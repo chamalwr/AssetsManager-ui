@@ -1,4 +1,5 @@
-<button class="btn btn-primary" type="submit" (click)="addNew()">Create New</button>
+<button class="btn btn-primary" type="submit" [disabled]="isDeleteCurrentSheetDisabled">Add new record</button>
+<button class="btn btn-primary" type="submit" (click)="addNew()">Create New Sheet</button>
 <button class="btn btn-primary" type="submit" [disabled]="isDeleteCurrentSheetDisabled" (click)="removeCurrentSheet(content)">Delete Current Sheet</button>
 <button class="btn btn-primary" type="submit" [disabled]="isDeleteCurrentSheetDisabled">Download Current Sheet</button>
 

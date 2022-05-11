@@ -1,11 +1,18 @@
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { NgbModal, NgbActiveModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { ExpenseSheetService } from 'src/app/assests-manager-common/service/expense-sheet.service';
 import { DateTime } from 'luxon';
 import { ExpenseRecordSummary } from '../../entity/expense-sheet-summary.entity';
+import { Observable, OperatorFunction } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, filter } from 'rxjs/operators'
+import { ExpenseCategory } from '../../../../app/assests-manager-common/entity/expense-category.entity';
+import { ExpenseCategoryService } from '../../../../app/assests-manager-common/service/expense-category.service';
+import { ExpenseRecord } from 'src/app/assests-manager-common/entity/expense-record.entity';
+
+type ExpenseRecordType = {id: number, name: string};
 
 @Component({
   selector: 'amgr-expense-sheet-selected-view',
@@ -24,22 +31,36 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
     totalAmount: '0.00',
     totalIncome: '0.00'
   };
+
+  currentExpenseRecord: ExpenseRecord = {
+    expenseRecordId: '',
+    date: 0,
+    notes: '',
+    amount: 0.00,
+    expenseCategoryId: '',
+  };
   expenseRecords$: any[] = [];
+  userExpenseCategories: ExpenseCategory[] = [];
   loading: boolean = false;
   userId: string = "chamalwr";
   currentSelectedMonth: number = DateTime.now().month;
   currentSelectedYear: number = DateTime.now().year;
 
+  public model!: ExpenseRecordType;
+  editProfileForm!: FormGroup;
+  formatter = (state: ExpenseRecordType) => state.name;
   filter = new FormControl('');
   closeResult = "";
 
   constructor(
     private expenseSheetService: ExpenseSheetService,
+    private expenseCategoryService: ExpenseCategoryService,
     private readonly toastr: ToastrService,
     private modalService: NgbModal,
     public modal: NgbActiveModal,
     currencyPipe: CurrencyPipe,
-    decimalPipe: DecimalPipe
+    decimalPipe: DecimalPipe,
+    private fb: FormBuilder
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -53,11 +74,35 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+    //load all expense categories created by user
+    if(this.userId){
+      this.getExpenseCategories(this.userId);
+    }
+
+    //Load current month and years exense sheet
     if(this.selectedMonthAndYear){
       this.getExpenseSheetForSelectedPeriod(this.userId, this.selectedMonthAndYear.month, this.selectedMonthAndYear.year, true);
     }else {
       this.getExpenseSheetForSelectedPeriod(this.userId, DateTime.now().month, DateTime.now().year, true);
     }
+  }
+
+  openEditExpenseRecord(expenseRecord: any, content: any) {
+    console.log(expenseRecord);
+    this.currentExpenseRecord = { 
+      expenseRecordId: expenseRecord._id,
+      notes: expenseRecord.notes,
+      amount: expenseRecord.amount,
+      date: expenseRecord.date,
+      expenseCategoryId: expenseRecord.expenseCategory._id,
+    }
+    this.modalService.open(content, { animation: true, centered: true, ariaLabelledBy: 'modal-basic-title', injector: expenseRecord})
+    .result.then((result) => {
+        console.log('Confirm Update Operation')
+        this.confirmExpenseRecordUpdate(expenseRecord);
+    }, (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
   }
 
   getExpenseSheetForSelectedPeriod(userId: string, month: number, year: number, isFirstTime?: boolean){
@@ -137,4 +182,53 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
       }
     });
   }
+
+  private confirmExpenseRecordUpdate(expenseRecord: any){
+    console.log(expenseRecord);
+    console.log(this.userExpenseCategories);
+  }
+  
+  private getExpenseCategories(userId: string) {
+    const data = this.expenseCategoryService.getAllExpenseCategories(userId);
+    data.subscribe({
+      next: (result: any) => {
+        if(result.loading){
+          this.loading = true;
+        }else {
+          if(result.data.expenseCategories && result.data.expenseCategories[0]['__typename'] === 'ExpenseCategory'){
+            this.userExpenseCategories = result.data.expenseCategories;
+            this.loading = false;
+          }else if(result.data.expenseCategories && result.data.expenseCategories[0]['__typename'] === 'ExpenseCategoryResultError') {
+            const errorModel = result.data.expenseCategories[0];
+            this.loading = false;
+            this.toastr.warning(errorModel.reason, errorModel.message);
+          }else {
+            this.loading = false;
+            this.toastr.warning(`Something went wrong cannot fetch expense categories for current user`, 'Expense Category Error');
+          }
+        }
+      },
+      error: (e) => {
+        this.loading = false;
+        this.toastr.warning(`Something went wrong cannot fetch expense categories for current user`, 'Expense Category Error');
+      }
+    });
+  }
+
+  private getDismissReason(reason: any): void {
+    if (reason === ModalDismissReasons.ESC) {
+      console.log('by pressing ESC');
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      console.log('by clicking on a backdrop')
+    } else {
+      console.log(`with: ${reason}`);
+    }
+  }
+
+  search: OperatorFunction<string, readonly {_id: string, name: string}[]> = (text$: Observable<string>) => text$.pipe(
+    debounceTime(200),
+    distinctUntilChanged(),
+    filter(term => term.length >= 2),
+    map(term => this.userExpenseCategories.filter(category => new RegExp(term, 'mi').test(category.name)).slice(0, 10))
+  )
 }
