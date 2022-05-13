@@ -26,6 +26,7 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
   @Output() currentExpenseSheetInfo = new EventEmitter<object>();
 
   expenseSheet: ExpenseRecordSummary = {
+    id: '',
     month: 'N/A',
     year: 'N/A',
     totalAmount: '0.00',
@@ -87,6 +88,10 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
     }
   }
 
+  openDeleteExpenseRecord(expenseSheetId: string, expenseRecordId: string, content: any){
+
+  }
+
   openEditExpenseRecord(expenseRecord: any, content: any) {
     console.log(expenseRecord);
     this.currentExpenseRecord = { 
@@ -116,6 +121,7 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
             this.expenseSheet = result.data.expeseSheetByMonthAndYear;
             //Setting expense sheet data to the binding property
             this.expenseSheet = {
+              id: this.expenseSheet.id,
               month: this.expenseSheet.month,
               year: this.expenseSheet.year,
               totalAmount: this.expenseSheet.totalAmount,
@@ -141,6 +147,7 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
             //Reseting values
             this.expenseRecords$ = [];
             this.expenseSheet = {
+              id: '',
               month: 'N/A',
               year: 'N/A',
               totalAmount: '0.00',
@@ -152,6 +159,7 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
              //Reseting values
             this.expenseRecords$ = [];
             this.expenseSheet = {
+              id: '',
               month: 'N/A',
               year: 'N/A',
               totalAmount: '0.00',
@@ -169,6 +177,7 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
          //Reseting values
         this.expenseRecords$ = [];
         this.expenseSheet = {
+          id: '',
           month: 'N/A',
           year: 'N/A',
           totalAmount: '0.00',

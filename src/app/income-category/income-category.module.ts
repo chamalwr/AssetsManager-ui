@@ -31,24 +31,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
   ],
   providers: [
     IncomeCategoryService,
-    {
-      provide: APOLLO_FLAGS,
-      useValue: {
-        useInitialLoading: true,
-      },
-    },
-    {
-      provide: APOLLO_OPTIONS,
-      useFactory: (httpLink: HttpLink) => {
-        return {
-          cache: new InMemoryCache(),
-          link: httpLink.create({
-            uri: 'http://44.203.46.92/graphql',
-          }),
-        };
-      },
-      deps: [HttpLink],
-    },
   ],
   exports: [],
 })
