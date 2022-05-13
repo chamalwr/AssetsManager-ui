@@ -1,5 +1,5 @@
 export class ExpenseRecordSummary {
-    id!: string;
+    _id!: string;
     totalIncome!: string;
     totalAmount!: string;
     month!: string;

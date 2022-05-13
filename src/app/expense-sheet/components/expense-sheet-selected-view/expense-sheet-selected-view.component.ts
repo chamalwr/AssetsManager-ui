@@ -11,6 +11,7 @@ import { debounceTime, distinctUntilChanged, map, filter } from 'rxjs/operators'
 import { ExpenseCategory } from '../../../../app/assests-manager-common/entity/expense-category.entity';
 import { ExpenseCategoryService } from '../../../../app/assests-manager-common/service/expense-category.service';
 import { ExpenseRecord } from 'src/app/assests-manager-common/entity/expense-record.entity';
+import { ExpenseRecordsService } from 'src/app/assests-manager-common/service/expense-records.service';
 
 type ExpenseRecordType = {id: number, name: string};
 
@@ -26,7 +27,7 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
   @Output() currentExpenseSheetInfo = new EventEmitter<object>();
 
   expenseSheet: ExpenseRecordSummary = {
-    id: '',
+    _id: '',
     month: 'N/A',
     year: 'N/A',
     totalAmount: '0.00',
@@ -56,6 +57,7 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
   constructor(
     private expenseSheetService: ExpenseSheetService,
     private expenseCategoryService: ExpenseCategoryService,
+    private expenseRecordService: ExpenseRecordsService,
     private readonly toastr: ToastrService,
     private modalService: NgbModal,
     public modal: NgbActiveModal,
@@ -89,7 +91,13 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
   }
 
   openDeleteExpenseRecord(expenseSheetId: string, expenseRecordId: string, content: any){
-
+    this.modalService.open(content, { animation: true, centered: true, ariaLabelledBy: 'modal-basic-title'})
+    .result.then((result) => {
+        console.log('Confirm Delete Operation')
+        this.confirmExpenseRecordDeletion(expenseSheetId, expenseRecordId);
+    }, (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
   }
 
   openEditExpenseRecord(expenseRecord: any, content: any) {
@@ -121,7 +129,7 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
             this.expenseSheet = result.data.expeseSheetByMonthAndYear;
             //Setting expense sheet data to the binding property
             this.expenseSheet = {
-              id: this.expenseSheet.id,
+              _id: this.expenseSheet._id,
               month: this.expenseSheet.month,
               year: this.expenseSheet.year,
               totalAmount: this.expenseSheet.totalAmount,
@@ -147,7 +155,7 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
             //Reseting values
             this.expenseRecords$ = [];
             this.expenseSheet = {
-              id: '',
+              _id: '',
               month: 'N/A',
               year: 'N/A',
               totalAmount: '0.00',
@@ -159,7 +167,7 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
              //Reseting values
             this.expenseRecords$ = [];
             this.expenseSheet = {
-              id: '',
+              _id: '',
               month: 'N/A',
               year: 'N/A',
               totalAmount: '0.00',
@@ -177,7 +185,7 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
          //Reseting values
         this.expenseRecords$ = [];
         this.expenseSheet = {
-          id: '',
+          _id: '',
           month: 'N/A',
           year: 'N/A',
           totalAmount: '0.00',
@@ -188,6 +196,34 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
         this.isDeleteSheetButtonDisabled.emit(false);
         this.loading = false;
         this.toastr.error(`Something went wrong!, Cannot fetch Expense Sheet for selected month and year`, 'Error');
+      }
+    });
+  }
+
+  private confirmExpenseRecordDeletion(expenseSheetId: string, expenseRecordId: string){
+    console.log(`Expense Sheet ID : ${expenseSheetId} and Expense Record Id : ${expenseRecordId}`);
+    const data = this.expenseRecordService.removeExpenseRecord(expenseSheetId, expenseRecordId);
+    data.subscribe({
+      next: (result: any) => {
+        if(result.loading){
+          this.loading = true;
+        }else {
+          if(result.data.removeExpenseRecord && result.data.removeExpenseRecord['__typename'] === 'ExpenseRecord' || result.data.removeExpenseRecord['__typename'] === 'ExpenseSheet'){
+            this.loading = false;
+            this.toastr.success(`Expense record deleted`, 'Expense Record Deletion Success');
+          }else if(result.data.removeExpenseRecord && result.data.removeExpenseRecord['__typename'] === 'ExpenseRecordResultError' ){
+            const errorModel = result.data.removeExpenseRecord;
+            this.loading = false;
+            this.toastr.warning(errorModel.reason, errorModel.message);
+          }else {
+            this.loading = false;
+            this.toastr.warning('Cannot delete selected expense record', 'Expense Record Deletion Failed');
+          }
+        }
+      },
+      error: (e) => {
+        this.loading = false;
+        this.toastr.warning('Cannot delete selected expense record', 'Expense Record Deletion Failed')
       }
     });
   }

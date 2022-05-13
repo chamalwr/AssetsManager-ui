@@ -49,14 +49,14 @@
       <td> {{ expenseRecord.amount }} </td>
       <td>
         <button type="button" class="btn btn-info" (click)="openEditExpenseRecord(expenseRecord, expenseRecordEdit)">Edit</button>
-        <button type="button" class="btn btn-warning">Delete</button>
+        <button type="button" class="btn btn-warning" (click)="openDeleteExpenseRecord(expenseSheet._id, expenseRecord._id, deleteExpenseRecord)">Delete</button>
       </td>
     </tr>
     </tbody>
 </table>
 
 <!-- Expense Sheet Deletion Confirmation Modal -->
-<ng-template #content let-modal>
+<ng-template #deleteExpenseRecord let-modal>
     <div class="modal-header">
       <h4 class="modal-title" id="modal-basic-title">Expense Sheet Deletion</h4>
       <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
