@@ -34,7 +34,7 @@ export class ExpenseSheetComponent implements OnInit, OnChanges {
       month: this.currentMonth,
       year: this.currentYear
     }
-   }
+  }
 
   ngOnInit(): void {
     //Get All user Expense Categories

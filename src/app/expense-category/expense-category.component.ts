@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { environment } from 'src/environments/environment';
 import { ExpenseCategoryService } from './expense-category.service';
 
 @Component({
@@ -12,14 +13,15 @@ export class ExpenseCategoryComponent implements OnInit {
   
   loading: boolean = true;
   expenseCategories: any[] = [];
-  
+  userId: string = environment.userId;
+
   constructor(
     private readonly expenseCategoryService: ExpenseCategoryService,
     private readonly toastr: ToastrService,
     private readonly route: Router,) { }
   
   ngOnInit(): void {
-    this.getAllExpenseCategories("johnDoe");
+    this.getAllExpenseCategories(this.userId);
   }
 
   getAllExpenseCategories(userId: string){

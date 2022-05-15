@@ -1,9 +1,11 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
-import { NgbModal, NgbActiveModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { NgbModal, NgbActiveModal, ModalDismissReasons, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { DateTime } from 'luxon';
 import { ToastrService } from 'ngx-toastr';
 import { debounceTime, distinctUntilChanged, filter, map, Observable, OperatorFunction } from 'rxjs';
 import { ExpenseCategory } from 'src/app/assests-manager-common/entity/expense-category.entity';
+import { ExpenseRecordsService } from 'src/app/assests-manager-common/service/expense-records.service';
 import { ExpenseSheetService } from 'src/app/assests-manager-common/service/expense-sheet.service';
 
 type ExpenseRecordType = {id: number, name: string};
@@ -19,6 +21,8 @@ export class ExpenseSheetActionsComponent implements OnInit, OnChanges {
   @Input() currentExpenseSheet!: any;
   @Input() userExpenseCategories: ExpenseCategory[] = [];
   currentExpenseSheetId!: string;
+  allowedMinDateRange!: NgbDateStruct;
+  allowedMaxDateRange!: NgbDateStruct;
 
   loading: boolean = false;
   public model!: ExpenseRecordType;
@@ -28,8 +32,16 @@ export class ExpenseSheetActionsComponent implements OnInit, OnChanges {
   filter = new FormControl('');
   closeResult: string = '';
 
+  expenseRecordCreateForm = new FormGroup({
+    date: new FormControl(null, [Validators.required]),
+    note: new FormControl(null, [Validators.required, Validators.minLength(3)]),
+    expenseCategory: new FormControl(null, [Validators.required]),
+    amount: new FormControl(null, [Validators.required]),
+  });
+
   constructor(
-    private expenseSheetService: ExpenseSheetService,
+    private readonly expenseSheetService: ExpenseSheetService,
+    private readonly expenseRecordService: ExpenseRecordsService,
     private readonly toastr: ToastrService,
     private modalService: NgbModal,
     public modal: NgbActiveModal,
@@ -43,8 +55,11 @@ export class ExpenseSheetActionsComponent implements OnInit, OnChanges {
     //Change detected on current expense sheet details
     if(changes['currentExpenseSheet']){
       const changedValues = changes['currentExpenseSheet'].currentValue;
-      if(changedValues?.expenseSheetId){
-        this.currentExpenseSheetId = changedValues.expenseSheetId;
+      if(changedValues?._id){
+        this.currentExpenseSheetId = changedValues._id;
+        const lastDayOfSelectedMonth = DateTime.local(Number(changedValues.year), Number(changedValues.month)).daysInMonth;
+        this.allowedMinDateRange = { year: Number(changedValues.year), month: Number(changedValues.month), day: 1}
+        this.allowedMaxDateRange = { year: Number(changedValues.year), month: Number(changedValues.month), day: lastDayOfSelectedMonth};
       }
     }
   }
@@ -53,17 +68,22 @@ export class ExpenseSheetActionsComponent implements OnInit, OnChanges {
     if(this.currentExpenseSheetId){
       this.modalService.open(content, { animation: true, centered: true, ariaLabelledBy: 'modal-basic-title'})
       .result.then((result) => {
-         this.confirmAddingNewExpenseRecord(this.currentExpenseSheetId, 'any');
+        if(result.status === 'VALID'){
+          //Selected month and year is in range of expense sheets month and year
+          if(result.value.date.month === this.currentExpenseSheet.month && result.value.date.year === this.currentExpenseSheet.year){
+            const newExpenseRecordDto = {
+              date: result.value.date.day,
+              notes: result.value.note,
+              amount: Number(result.value.amount),
+              expenseCategory: result.value.expenseCategory._id,
+            }
+           this.confirmAddingNewExpenseRecord(this.currentExpenseSheetId, newExpenseRecordDto);
+          }
+        }
       }, (reason) => {
         this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
       });
     }
-  }
-
-  private confirmAddingNewExpenseRecord(expenseSheetId: string, expenseRecordDto: any){
-    console.log(expenseSheetId);
-    console.log(expenseRecordDto);
-    console.log(this.userExpenseCategories);
   }
 
   removeCurrentSheet(content: any){
@@ -76,6 +96,37 @@ export class ExpenseSheetActionsComponent implements OnInit, OnChanges {
     }else{
       this.toastr.warning(`Something went wrong, failed to delete expense sheet`, 'Expense Sheet Deletion Error');
     }
+  }
+
+  private confirmAddingNewExpenseRecord(expenseSheetId: string, expenseRecordDto: any){
+    const data = this.expenseRecordService.createExpenseRecord(expenseSheetId, expenseRecordDto);
+    data.subscribe({
+      next: (result: any) => {
+        if(result.loading){
+          this.loading = true;
+        }else {
+          if(result.data.createExpenseRecord && result.data.createExpenseRecord['__typename'] === 'ExpenseRecord') {
+            const createdExpenseRecord = result.data.createExpenseRecord;
+            console.log(createdExpenseRecord);
+            this.loading = false;
+            window.location.reload();
+            this.toastr.success(`Expense record for ${createdExpenseRecord.notes} is created`, `Expense Record Created`);
+            console.log(createdExpenseRecord);
+          }else if(result.data.createExpenseRecord && result.data.createExpenseRecord['__typename'] === 'ExpenseRecord' ) {
+            const errorModel = result.data.createExpenseRecord;
+            this.loading = false;
+            this.toastr.warning(errorModel.reason, errorModel.message);
+          }else {
+            this.loading = false;
+            this.toastr.error(`Something went wrong. Cannot create expense record`, `Expense Record Creation Failed`);
+          }
+        }
+      },
+      error: (e) => {
+        this.loading = false;
+        this.toastr.error(`Something went wrong. Cannot create expense record`, `Expense Record Creation Failed`);
+      }
+    })
   }
 
   private confirmDeletion(id: string){

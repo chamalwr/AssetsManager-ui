@@ -131,7 +131,7 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
             this.currentSelectedMonth = result.data.expeseSheetByMonthAndYear.month;
             this.currentSelectedYear = result.data.expeseSheetByMonthAndYear.year;
             this.loading = false;
-            this.currentExpenseSheetInfo.emit({expenseSheetId: result.data.expeseSheetByMonthAndYear._id});
+            this.currentExpenseSheetInfo.emit(this.expenseSheet);
           }else if(result.data.expeseSheetByMonthAndYear && result.data.expeseSheetByMonthAndYear['__typename'] === 'ExpenseSheetResultError'){
             if(isFirstTime){
               const errorModel = result.data.expeseSheetByMonthAndYear;

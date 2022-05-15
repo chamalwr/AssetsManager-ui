@@ -27,11 +27,12 @@
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
   </div>
   <div class="modal-body">
-    <form>
+    <form [formGroup]="expenseRecordCreateForm">
       <div class="mb-3">
         <label for="recordDate">Date</label>
         <div class="input-group">
-          <input id="recordDate" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #dp="ngbDatepicker">
+          <input id="recordDate" class="form-control" placeholder="yyyy-mm-dd" formControlName="date"
+              [minDate]="allowedMinDateRange" [maxDate]="allowedMaxDateRange" name="dp" ngbDatepicker #dp="ngbDatepicker">
           <button class="btn btn-outline-secondary calendar" (click)="dp.toggle()" type="button"></button>
         </div>
       </div>
@@ -39,7 +40,7 @@
       <div class="mb-3">
         <label for="note">Note : </label>
         <div class="input-group">
-          <input id="note" class="form-control" placeholder="" name="note">
+          <input id="note" formControlName="note" class="form-control" placeholder="" name="note">
         </div>
       </div>
 
@@ -48,12 +49,11 @@
         <div class="input-group">
           <div class="col">
             <input id="expenseCategory" type="text" class="form-control"
-              [(ngModel)]="model"
-              [ngModelOptions]="{ standalone: true }"
               [ngbTypeahead]="search"
               [inputFormatter]="formatter"
               [resultFormatter]="formatter"
-              [editable]='false' />
+              [editable]='false' 
+              formControlName="expenseCategory"/>
           </div>
         </div>
       </div>
@@ -61,12 +61,12 @@
       <div class="mb-3">
         <label for="amount">Amount : </label>
         <div class="input-group">
-          <input id="amount" class="form-control" placeholder="" name="amount">
+          <input type = "number" id="amount" class="form-control" formControlName="amount" placeholder="" name="amount">
         </div>
       </div>
     </form>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
-  </div>
+    <div class="modal-footer">
+      <button type="submit" [disabled]="expenseRecordCreateForm.invalid" class="btn btn-outline-dark" (click)="modal.close(expenseRecordCreateForm)">Save</button>
+    </div>
+    </div>
 </ng-template>
