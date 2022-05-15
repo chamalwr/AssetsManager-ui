@@ -5,6 +5,7 @@ import { DateTime } from "luxon";
 import { ExpenseCategoryService } from '../assests-manager-common/service/expense-category.service';
 import { ExpenseCategory } from '../../app/assests-manager-common/entity/expense-category.entity';
 import { ToastrService } from 'ngx-toastr';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'amgr-expense-sheet',
@@ -19,7 +20,7 @@ export class ExpenseSheetComponent implements OnInit, OnChanges {
   currentYear: number;
   deleteCurrentExpenseSheetButton: boolean = false;
   currentlySelectedExpenseSheet!: object;
-  userId: string = 'chamalwr';
+  userId: string = environment.userId;
   userExpenseCategories: ExpenseCategory[] = [];
   loading: boolean = false;
 

@@ -4,6 +4,7 @@ import { FormControl } from '@angular/forms';
 import { ModalDismissReasons, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { ExpenseSheetService } from 'src/app/assests-manager-common/service/expense-sheet.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'amgr-expense-sheet-all-view',
@@ -26,7 +27,7 @@ export class ExpenseSheetAllViewComponent implements OnInit {
   }
     
   ngOnInit(): void {
-    this.getExpenseSheetSummary("chamalwr");
+    this.getExpenseSheetSummary(environment.userId);
   }
 
   getExpenseSheetSummary(userId: string){

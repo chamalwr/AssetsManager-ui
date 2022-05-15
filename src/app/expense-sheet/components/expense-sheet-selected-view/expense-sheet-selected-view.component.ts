@@ -11,6 +11,7 @@ import { debounceTime, distinctUntilChanged, map, filter } from 'rxjs/operators'
 import { ExpenseCategory } from '../../../../app/assests-manager-common/entity/expense-category.entity';
 import { ExpenseRecord } from 'src/app/assests-manager-common/entity/expense-record.entity';
 import { ExpenseRecordsService } from 'src/app/assests-manager-common/service/expense-records.service';
+import { environment } from 'src/environments/environment';
 
 type ExpenseRecordType = {id: number, name: string};
 
@@ -42,7 +43,7 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
   };
   expenseRecords$: any[] = [];
   loading: boolean = false;
-  userId: string = "chamalwr";
+  userId: string = environment.userId;
   currentSelectedMonth: number = DateTime.now().month;
   currentSelectedYear: number = DateTime.now().year;
 

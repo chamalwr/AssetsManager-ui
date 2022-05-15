@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { environment } from 'src/environments/environment';
 import { IncomeCategoryService } from './income-category.service';
 
 @Component({
@@ -18,7 +19,7 @@ export class IncomeCategoryComponent implements OnInit {
   incomeCategories: any[] = [];
 
   ngOnInit(): void {
-    this.getAllIncomeCategories('chamalwr');
+    this.getAllIncomeCategories(environment.userId);
   }
 
   getIncomeCategoryById(id: string){
