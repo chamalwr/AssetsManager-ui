@@ -13,6 +13,7 @@
 <amgr-expense-sheet-actions 
     [isDeleteCurrentSheetDisabled]="deleteCurrentExpenseSheetButton"
     [currentExpenseSheet]="currentlySelectedExpenseSheet"
+    [userExpenseCategories]="userExpenseCategories"
 >
 </amgr-expense-sheet-actions>
 
@@ -21,6 +22,7 @@
 <p *ngIf="currentView === 'SELECTED_VIEW'">
     <amgr-expense-sheet-selected-view 
         [selectedMonthAndYear]="selectedPeriod" 
+        [userExpenseCategories]="userExpenseCategories"
         (isDeleteSheetButtonDisabled)="disableDeleteButton($event)"
         (currentExpenseSheetInfo)="getCurrentlySelectedExpenseSheetDetail($event)"
     >

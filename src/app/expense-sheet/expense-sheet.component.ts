@@ -2,6 +2,9 @@ import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { SelectedPeriodEntity } from './entity/selected-period.entity';
 import { ViewType } from './enum/view-type.enum';
 import { DateTime } from "luxon";
+import { ExpenseCategoryService } from '../assests-manager-common/service/expense-category.service';
+import { ExpenseCategory } from '../../app/assests-manager-common/entity/expense-category.entity';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'amgr-expense-sheet',
@@ -16,8 +19,14 @@ export class ExpenseSheetComponent implements OnInit, OnChanges {
   currentYear: number;
   deleteCurrentExpenseSheetButton: boolean = false;
   currentlySelectedExpenseSheet!: object;
+  userId: string = 'chamalwr';
+  userExpenseCategories: ExpenseCategory[] = [];
+  loading: boolean = false;
 
-  constructor() {
+  constructor(
+    private readonly expenseCategoryService: ExpenseCategoryService,
+    private readonly toastr: ToastrService,) {
+
     this.currentYear = DateTime.now().year;
     this.currentMonth = DateTime.now().month;
 
@@ -28,6 +37,10 @@ export class ExpenseSheetComponent implements OnInit, OnChanges {
    }
 
   ngOnInit(): void {
+    //Get All user Expense Categories
+    if(this.userId){
+      this.getExpenseCategories(this.userId);
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -58,6 +71,33 @@ export class ExpenseSheetComponent implements OnInit, OnChanges {
     if(event){
       this.currentlySelectedExpenseSheet = event;
     }
+  }
+
+  private getExpenseCategories(userId: string) {
+    const data = this.expenseCategoryService.getAllExpenseCategories(userId);
+    data.subscribe({
+      next: (result: any) => {
+        if(result.loading){
+          this.loading = true;
+        }else {
+          if(result.data.expenseCategories && result.data.expenseCategories[0]['__typename'] === 'ExpenseCategory'){
+            this.userExpenseCategories = result.data.expenseCategories;
+            this.loading = false;
+          }else if(result.data.expenseCategories && result.data.expenseCategories[0]['__typename'] === 'ExpenseCategoryResultError') {
+            const errorModel = result.data.expenseCategories[0];
+            this.loading = false;
+            this.toastr.warning(errorModel.reason, errorModel.message);
+          }else {
+            this.loading = false;
+            this.toastr.warning(`Something went wrong cannot fetch expense categories for current user`, 'Expense Category Error');
+          }
+        }
+      },
+      error: (e) => {
+        this.loading = false;
+        this.toastr.warning(`Something went wrong cannot fetch expense categories for current user`, 'Expense Category Error');
+      }
+    });
   }
 
 }

@@ -1,7 +1,12 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { FormGroup, FormControl } from '@angular/forms';
 import { NgbModal, NgbActiveModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
+import { debounceTime, distinctUntilChanged, filter, map, Observable, OperatorFunction } from 'rxjs';
+import { ExpenseCategory } from 'src/app/assests-manager-common/entity/expense-category.entity';
 import { ExpenseSheetService } from 'src/app/assests-manager-common/service/expense-sheet.service';
+
+type ExpenseRecordType = {id: number, name: string};
 
 @Component({
   selector: 'amgr-expense-sheet-actions',
@@ -12,8 +17,15 @@ export class ExpenseSheetActionsComponent implements OnInit, OnChanges {
 
   @Input() isDeleteCurrentSheetDisabled: boolean = false;
   @Input() currentExpenseSheet!: any;
+  @Input() userExpenseCategories: ExpenseCategory[] = [];
   currentExpenseSheetId!: string;
+
   loading: boolean = false;
+  public model!: ExpenseRecordType;
+  addExpenseRecordForm!: FormGroup;
+
+  formatter = (state: ExpenseRecordType) => state.name;
+  filter = new FormControl('');
   closeResult: string = '';
 
   constructor(
@@ -37,8 +49,21 @@ export class ExpenseSheetActionsComponent implements OnInit, OnChanges {
     }
   }
 
-  addNew(){
+  addNewExpenseRecord(content: any){
+    if(this.currentExpenseSheetId){
+      this.modalService.open(content, { animation: true, centered: true, ariaLabelledBy: 'modal-basic-title'})
+      .result.then((result) => {
+         this.confirmAddingNewExpenseRecord(this.currentExpenseSheetId, 'any');
+      }, (reason) => {
+        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+      });
+    }
+  }
 
+  private confirmAddingNewExpenseRecord(expenseSheetId: string, expenseRecordDto: any){
+    console.log(expenseSheetId);
+    console.log(expenseRecordDto);
+    console.log(this.userExpenseCategories);
   }
 
   removeCurrentSheet(content: any){
@@ -91,4 +116,11 @@ export class ExpenseSheetActionsComponent implements OnInit, OnChanges {
       console.log(`with: ${reason}`);
     }
   }
+
+  search: OperatorFunction<string, readonly {_id: string, name: string}[]> = (text$: Observable<string>) => text$.pipe(
+    debounceTime(200),
+    distinctUntilChanged(),
+    filter(term => term.length >= 2),
+    map(term => this.userExpenseCategories.filter(category => new RegExp(term, 'mi').test(category.name)).slice(0, 10))
+  )
 }

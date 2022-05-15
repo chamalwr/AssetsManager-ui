@@ -9,7 +9,6 @@ import { ExpenseRecordSummary } from '../../entity/expense-sheet-summary.entity'
 import { Observable, OperatorFunction } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, filter } from 'rxjs/operators'
 import { ExpenseCategory } from '../../../../app/assests-manager-common/entity/expense-category.entity';
-import { ExpenseCategoryService } from '../../../../app/assests-manager-common/service/expense-category.service';
 import { ExpenseRecord } from 'src/app/assests-manager-common/entity/expense-record.entity';
 import { ExpenseRecordsService } from 'src/app/assests-manager-common/service/expense-records.service';
 
@@ -25,7 +24,7 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
   @Input() selectedMonthAndYear: any;
   @Output() isDeleteSheetButtonDisabled = new EventEmitter<boolean>();
   @Output() currentExpenseSheetInfo = new EventEmitter<object>();
-
+  @Input() userExpenseCategories: ExpenseCategory[] = [];
   expenseSheet: ExpenseRecordSummary = {
     _id: '',
     month: 'N/A',
@@ -42,7 +41,6 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
     expenseCategoryId: '',
   };
   expenseRecords$: any[] = [];
-  userExpenseCategories: ExpenseCategory[] = [];
   loading: boolean = false;
   userId: string = "chamalwr";
   currentSelectedMonth: number = DateTime.now().month;
@@ -56,7 +54,6 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
 
   constructor(
     private expenseSheetService: ExpenseSheetService,
-    private expenseCategoryService: ExpenseCategoryService,
     private expenseRecordService: ExpenseRecordsService,
     private readonly toastr: ToastrService,
     private modalService: NgbModal,
@@ -77,11 +74,6 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    //load all expense categories created by user
-    if(this.userId){
-      this.getExpenseCategories(this.userId);
-    }
-
     //Load current month and years exense sheet
     if(this.selectedMonthAndYear){
       this.getExpenseSheetForSelectedPeriod(this.userId, this.selectedMonthAndYear.month, this.selectedMonthAndYear.year, true);
@@ -231,33 +223,6 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
   private confirmExpenseRecordUpdate(expenseRecord: any){
     console.log(expenseRecord);
     console.log(this.userExpenseCategories);
-  }
-  
-  private getExpenseCategories(userId: string) {
-    const data = this.expenseCategoryService.getAllExpenseCategories(userId);
-    data.subscribe({
-      next: (result: any) => {
-        if(result.loading){
-          this.loading = true;
-        }else {
-          if(result.data.expenseCategories && result.data.expenseCategories[0]['__typename'] === 'ExpenseCategory'){
-            this.userExpenseCategories = result.data.expenseCategories;
-            this.loading = false;
-          }else if(result.data.expenseCategories && result.data.expenseCategories[0]['__typename'] === 'ExpenseCategoryResultError') {
-            const errorModel = result.data.expenseCategories[0];
-            this.loading = false;
-            this.toastr.warning(errorModel.reason, errorModel.message);
-          }else {
-            this.loading = false;
-            this.toastr.warning(`Something went wrong cannot fetch expense categories for current user`, 'Expense Category Error');
-          }
-        }
-      },
-      error: (e) => {
-        this.loading = false;
-        this.toastr.warning(`Something went wrong cannot fetch expense categories for current user`, 'Expense Category Error');
-      }
-    });
   }
 
   private getDismissReason(reason: any): void {
