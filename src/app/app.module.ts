@@ -29,7 +29,11 @@ import { environment } from 'src/environments/environment';
     AssestsManagerCommonModule,
     IncomeSheetModule,
     IncomeCategoryModule,
-    ToastrModule.forRoot(),
+    ToastrModule.forRoot({
+      timeOut: 8000,
+      extendedTimeOut: 1000,
+      easeTime: 300,
+    }),
     NgbModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,

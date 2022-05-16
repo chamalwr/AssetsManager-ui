@@ -107,11 +107,11 @@ export class ExpenseSheetActionsComponent implements OnInit, OnChanges {
         }else {
           if(result.data.createExpenseRecord && result.data.createExpenseRecord['__typename'] === 'ExpenseRecord') {
             const createdExpenseRecord = result.data.createExpenseRecord;
-            console.log(createdExpenseRecord);
             this.loading = false;
-            window.location.reload();
             this.toastr.success(`Expense record for ${createdExpenseRecord.notes} is created`, `Expense Record Created`);
-            console.log(createdExpenseRecord);
+            setInterval(() => {
+              window.location.reload();
+            }, 2000);
           }else if(result.data.createExpenseRecord && result.data.createExpenseRecord['__typename'] === 'ExpenseRecord' ) {
             const errorModel = result.data.createExpenseRecord;
             this.loading = false;
