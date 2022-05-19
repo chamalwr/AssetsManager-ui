@@ -10,6 +10,7 @@ import { ExpenseSheetActionsComponent } from './components/expense-sheet-actions
 import { NgbActiveModal, NgbDatepickerModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ExpenseSheetAllViewComponent } from './components/expense-sheet-all-view/expense-sheet-all-view.component';
 import { ExpenseSheetSelectedViewComponent } from './components/expense-sheet-selected-view/expense-sheet-selected-view.component';
+import { AddExpenseSheetComponent } from './components/add-expense-sheet/add-expense-sheet.component';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { ExpenseSheetSelectedViewComponent } from './components/expense-sheet-se
     ExpenseSheetSearchComponent,
     ExpenseSheetActionsComponent,
     ExpenseSheetAllViewComponent,
-    ExpenseSheetSelectedViewComponent
+    ExpenseSheetSelectedViewComponent,
+    AddExpenseSheetComponent
   ],
   imports: [
     CommonModule,

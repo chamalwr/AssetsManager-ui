@@ -1,0 +1,67 @@
+<nav class="navbar navbar-light bg-light">
+    <button type="button" class="btn btn-outline-primary" routerLink="/expense-sheet">Back</button>
+    <span class="navbar-brand mb-1 h1">Add Expense Sheet</span>
+</nav>
+
+<div>
+    <form class="row row-cols-sm-auto">
+        <div class="col-12">
+            <div class="input-group">
+              <label>Select Year and Month : </label>
+              <input class="form-control" placeholder="mm-yyyy"
+                  name="dp" [(ngModel)]="calenderModel" ngbDatepicker #d="ngbDatepicker">
+              <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
+            </div>
+            <button class="btn btn-sm btn-outline-primary" (click)="selectToday()">Current Month</button>
+            <button class="btn btn-sm btn-outline-primary" type="reset">Clear</button>
+        </div>
+
+        <div class="col-12">
+            <div class="input-group">
+              <label>Select Currency : </label>
+              <input class="form-control" placeholder="USD" name="currency" type="text">
+            </div>
+        </div>
+    </form>
+        
+    <div class="mb-3 row">
+        <div class="col-xs-3 col-sm-auto">
+            <button type="button" class="btn btn-info">Add New Record</button>
+        </div>
+    </div>
+
+    <form class="row row-cols-sm-auto">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Date</th>
+              <th scope="col">Note</th>
+              <th scope="col">Expense Category</th>
+              <th scope="col">Amount</th>
+              <th scope="col">Options</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let expenseRecord of temporyExpenseRecords; index as i">
+              <th scope="row">{{ 1 }}</th>
+              <td> Date </td>
+              <td> This is a note </td>
+              <td> Expense Category </td>
+              <td> Amount </td>
+              <td>
+                <button type="button" class="btn btn-info">Edit</button>
+                <button type="button" class="btn btn-warning">Delete</button>
+              </td>
+            </tr>
+            </tbody>
+        </table>
+                
+        <div class="mb-3 row">
+            <div class="col-xs-3 col-sm-auto">
+                <button type="button" class="btn btn-outline-dark">Clear All</button>
+                <button type="button" class="btn btn-info">Save All</button>
+            </div>
+        </div>
+    </form>
+</div>

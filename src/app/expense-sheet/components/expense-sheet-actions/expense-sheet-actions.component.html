@@ -1,5 +1,5 @@
 <button class="btn btn-primary" type="submit" [disabled]="isDeleteCurrentSheetDisabled" (click)="addNewExpenseRecord(addExpenseRecordModal)">Add new record</button>
-<button class="btn btn-primary" type="submit" >Create New Sheet</button>
+<button class="btn btn-primary" type="submit" routerLink="add-expense-sheet">Create New Sheet</button>
 <button class="btn btn-primary" type="submit" [disabled]="isDeleteCurrentSheetDisabled" (click)="removeCurrentSheet(content)">Delete Current Sheet</button>
 <button class="btn btn-primary" type="submit" [disabled]="isDeleteCurrentSheetDisabled">Download Current Sheet</button>
 
