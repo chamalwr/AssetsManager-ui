@@ -98,12 +98,23 @@ export class AddExpenseSheetComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  openSaveExpenseSheetConfirmation(content: any){
-    this.modalService.open(content, { centered: true, ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
-      this.ConfirmExpenseSheetCreation();
-    }, (reason) => {
-      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-    });;
+  openSaveExpenseSheetConfirmation(content: any, savewithoutExpenseRecordModel?: any){
+    if(!this.calenderModel || !this.selectedCurrency){
+      this.toastr.warning('Select a Year, Month and Currency to create expense sheet', 'Required Information is Missing');
+    }else if(this.temporyExpenseRecords.length <= 0){
+      //Confirm user wants to create expense sheet without any record in it
+      this.modalService.open(savewithoutExpenseRecordModel, { centered: true, ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+        this.ConfirmExpenseSheetCreation();
+      }, (reason) => {
+        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+      });;
+    }else {
+      this.modalService.open(content, { centered: true, ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+        this.ConfirmExpenseSheetCreation();
+      }, (reason) => {
+        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+      });;
+    }
   }
 
   private ConfirmExpenseSheetCreation(){
