@@ -30,5 +30,8 @@
 </p>
 
 <p *ngIf="currentView === 'ALL_VIEW'">
-    <amgr-expense-sheet-all-view></amgr-expense-sheet-all-view>
+    <amgr-expense-sheet-all-view 
+        (selectedExpenseSheetForDetailedView)="getCurrentlySelectedExpenseSheetDetail($event)"
+    >
+    </amgr-expense-sheet-all-view>
 </p>

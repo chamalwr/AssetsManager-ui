@@ -71,6 +71,7 @@ export class ExpenseSheetComponent implements OnInit, OnChanges {
   getCurrentlySelectedExpenseSheetDetail(event: any){
     if(event){
       this.currentlySelectedExpenseSheet = event;
+      this.changeToSelectedView({ year: event.year, month: event.month })
     }
   }
 

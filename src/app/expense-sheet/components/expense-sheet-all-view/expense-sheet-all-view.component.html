@@ -26,7 +26,7 @@
       <td><ngb-highlight [result]="expenseSheet.currency"></ngb-highlight></td>
       <td><ngb-highlight [result]="expenseSheet.totalAmount"></ngb-highlight></td>
       <td>
-        <button type="button" class="btn btn-primary" >View</button>
+        <button type="button" class="btn btn-primary" (click)="viewSelectedExpenseSheet(expenseSheet)">View</button>
         <button type="button" class="btn btn-info" >Edit</button>
         <button type="button" class="btn btn-warning" (click)="deleteExpenseSheetConfirmation(expenseSheet._id, content)">Delete</button>
       </td>

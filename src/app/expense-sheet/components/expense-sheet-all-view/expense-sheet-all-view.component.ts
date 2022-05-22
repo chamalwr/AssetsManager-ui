@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, OnInit, PipeTransform, Type } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, PipeTransform, Type } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ModalDismissReasons, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -13,6 +13,7 @@ import { environment } from 'src/environments/environment';
 })
 export class ExpenseSheetAllViewComponent implements OnInit {
 
+  @Output() selectedExpenseSheetForDetailedView = new EventEmitter<any>();
   expenseSheetsSummary$: any[] = [];
   filter = new FormControl('');
   loading: boolean = false;
@@ -28,6 +29,10 @@ export class ExpenseSheetAllViewComponent implements OnInit {
     
   ngOnInit(): void {
     this.getExpenseSheetSummary(environment.userId);
+  }
+
+  viewSelectedExpenseSheet(expenseSheet: any){
+    this.selectedExpenseSheetForDetailedView.emit(expenseSheet);
   }
 
   getExpenseSheetSummary(userId: string){
