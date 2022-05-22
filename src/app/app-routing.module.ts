@@ -15,6 +15,10 @@ const routes: Routes = [
     loadChildren: ()=> import('./income-category/income-category.module').then(m => m.IncomeCategoryModule)
   },
   {
+    path: 'expense-sheet',
+    loadChildren: ()=> import('./expense-sheet/expense-sheet.module').then(m => m.ExpenseSheetModule)
+  },
+  {
     path: 'expense-category',
     loadChildren: ()=> import('./expense-category/expense-category.module').then(m => m.ExpenseCategoryModule)
   },

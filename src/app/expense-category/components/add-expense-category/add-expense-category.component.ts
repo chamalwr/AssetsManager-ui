@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { environment } from 'src/environments/environment';
 import { ExpenseCategoryService } from '../../expense-category.service';
 
 @Component({
@@ -26,7 +27,7 @@ export class AddExpenseCategoryComponent implements OnInit {
   }
 
   createExpenseCategory(){
-    let userId = "johnDoe";
+    let userId = environment.userId;
     if(this.createExpenseCategoryForm.status === 'VALID'){
       const createExpenseCategoryInput = {
         name: this.createExpenseCategoryForm.value.name,
@@ -46,5 +47,4 @@ export class AddExpenseCategoryComponent implements OnInit {
       });
     }
   }
-
 }

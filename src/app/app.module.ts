@@ -12,6 +12,10 @@ import { IncomeSheetModule } from './income-sheet/income-sheet.module';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ExpenseCategoryComponent } from './expense-category/expense-category.component';
+import { APOLLO_FLAGS, APOLLO_OPTIONS } from 'apollo-angular';
+import { HttpLink } from 'apollo-angular/http';
+import { InMemoryCache } from '@apollo/client/core';
+import { environment } from 'src/environments/environment';
 
 @NgModule({
   declarations: [
@@ -25,12 +29,35 @@ import { ExpenseCategoryComponent } from './expense-category/expense-category.co
     AssestsManagerCommonModule,
     IncomeSheetModule,
     IncomeCategoryModule,
-    ToastrModule.forRoot(),
+    ToastrModule.forRoot({
+      timeOut: 8000,
+      extendedTimeOut: 1000,
+      easeTime: 300,
+    }),
     NgbModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: APOLLO_FLAGS,
+      useValue: {
+        useInitialLoading: true,
+      },
+    },
+    {
+      provide: APOLLO_OPTIONS,
+      useFactory: (httpLink: HttpLink) => {
+        return {
+          cache: new InMemoryCache(),
+          link: httpLink.create({
+            uri: environment.graphqlServerAWS,
+          }),
+        };
+      },
+      deps: [HttpLink],
+    },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

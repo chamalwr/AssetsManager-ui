@@ -1,0 +1,53 @@
+<form>
+    <div class="mb-3 row">
+      <label for="table-filtering-search" class="col-xs-3 col-sm-auto col-form-label">Search :</label>
+      <div class="col-xs-3 col-sm-auto">
+        <input id="table-filtering-search" class="form-control" type="text">
+      </div>
+    </div>
+  </form>
+  
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Month - Year</th>
+      <th scope="col">Currency</th>
+      <th scope="col">Total Expenses</th>
+      <th scope="col">Options</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let expenseSheet of expenseSheetsSummary$; index as i">
+      <th scope="row">{{ i + 1 }}</th>
+      <td>
+        {{ expenseSheet.month + "-" +expenseSheet.year }}
+      </td>
+      <td><ngb-highlight [result]="expenseSheet.currency"></ngb-highlight></td>
+      <td><ngb-highlight [result]="expenseSheet.totalAmount"></ngb-highlight></td>
+      <td>
+        <button type="button" class="btn btn-primary" (click)="viewSelectedExpenseSheet(expenseSheet)">View</button>
+        <button type="button" class="btn btn-info" >Edit</button>
+        <button type="button" class="btn btn-warning" (click)="deleteExpenseSheetConfirmation(expenseSheet._id, content)">Delete</button>
+      </td>
+
+    </tr>
+    </tbody>
+</table>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Expense Sheet Deletion</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <p><strong>Are you sure you want to delete <span class="text-primary">"John Doe"</span> expense sheet?</strong></p>
+    <p><span class="text-primary">Expense Sheet</span> and related <span class="text-primary">Expense Records</span> will be deleted.
+    <span class="text-danger">This operation can not be undone.</span>
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Cancel</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Ok click')">Ok</button>
+  </div>
+</ng-template>

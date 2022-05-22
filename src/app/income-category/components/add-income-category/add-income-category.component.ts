@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { environment } from 'src/environments/environment';
 import { IncomeCategoryService } from '../../income-category.service';
 
 @Component({
@@ -26,7 +27,7 @@ export class AddIncomeCategoryComponent implements OnInit {
   }
 
   createIncomeCategory(){
-    let userId = "chamalwr";
+    let userId = environment.userId;
     if(this.createIncomeCategoryForm.status === 'VALID'){
       const createIncomeCategoryInput = {
         name: this.createIncomeCategoryForm.value.name,

@@ -1,0 +1,72 @@
+<button class="btn btn-primary" type="submit" [disabled]="isDeleteCurrentSheetDisabled" (click)="addNewExpenseRecord(addExpenseRecordModal)">Add new record</button>
+<button class="btn btn-primary" type="submit" routerLink="add-expense-sheet">Create New Sheet</button>
+<button class="btn btn-primary" type="submit" [disabled]="isDeleteCurrentSheetDisabled" (click)="removeCurrentSheet(content)">Delete Current Sheet</button>
+<button class="btn btn-primary" type="submit" [disabled]="isDeleteCurrentSheetDisabled">Download Current Sheet</button>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Expense Sheet Deletion</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Are you sure you want to delete <span class="text-primary">"John Doe"</span> expense sheet?</strong></p>
+      <p><span class="text-primary">Expense Sheet</span> and related <span class="text-primary">Expense Records</span> will be deleted.
+      <span class="text-danger">This operation can not be undone.</span>
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Cancel</button>
+      <button type="button" class="btn btn-danger" (click)="modal.close('Ok click')">Ok</button>
+    </div>
+</ng-template>
+
+<!-- Add New Expense Record Modal -->
+<ng-template #addExpenseRecordModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Add Expense Record</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="expenseRecordCreateForm">
+      <div class="mb-3">
+        <label for="recordDate">Date</label>
+        <div class="input-group">
+          <input id="recordDate" class="form-control" placeholder="yyyy-mm-dd" formControlName="date"
+              [minDate]="allowedMinDateRange" [maxDate]="allowedMaxDateRange" name="dp" ngbDatepicker #dp="ngbDatepicker">
+          <button class="btn btn-outline-secondary calendar" (click)="dp.toggle()" type="button"></button>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="note">Note : </label>
+        <div class="input-group">
+          <input id="note" formControlName="note" class="form-control" placeholder="" name="note">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="expenseCategory">Expense Category : </label>
+        <div class="input-group">
+          <div class="col">
+            <input id="expenseCategory" type="text" class="form-control"
+              [ngbTypeahead]="search"
+              [inputFormatter]="formatter"
+              [resultFormatter]="formatter"
+              [editable]='false' 
+              formControlName="expenseCategory"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="amount">Amount : </label>
+        <div class="input-group">
+          <input type = "number" id="amount" class="form-control" formControlName="amount" placeholder="" name="amount">
+        </div>
+      </div>
+    </form>
+    <div class="modal-footer">
+      <button type="submit" [disabled]="expenseRecordCreateForm.invalid" class="btn btn-outline-dark" (click)="modal.close(expenseRecordCreateForm)">Save</button>
+    </div>
+    </div>
+</ng-template>
