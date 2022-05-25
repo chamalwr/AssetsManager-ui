@@ -34,7 +34,6 @@ export class UpdateIncomeCategoryComponent implements OnInit {
   }
 
   updateIncomeCategory() {
-    console.log(this.incomeCategoryId);
     if(this.updateIncomeCategoryForm.status === 'VALID'){
       const updateIncomeCategoryInput = {
         name: this.updateIncomeCategoryForm.value.name,

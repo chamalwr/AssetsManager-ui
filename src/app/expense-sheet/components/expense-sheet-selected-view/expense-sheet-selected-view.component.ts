@@ -12,6 +12,7 @@ import { ExpenseCategory } from '../../../../app/assests-manager-common/entity/e
 import { ExpenseRecord } from 'src/app/assests-manager-common/entity/expense-record.entity';
 import { ExpenseRecordsService } from 'src/app/assests-manager-common/service/expense-records.service';
 import { environment } from 'src/environments/environment';
+import { CreateExpenseRecordDto } from 'src/app/assests-manager-common/dto/create-expense-record.dto';
 
 type ExpenseRecordType = {id: number, name: string};
 
@@ -39,9 +40,9 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
     date: 0,
     notes: '',
     amount: 0.00,
-    expenseCategoryId: '',
+    expenseCategory: new ExpenseCategory,
   };
-  expenseRecords$: any[] = [];
+  expenseRecords$: ExpenseRecord[] = [];
   loading: boolean = false;
   userId: string = environment.userId;
   currentSelectedMonth: number = DateTime.now().month;
@@ -51,7 +52,7 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
   editProfileForm!: FormGroup;
   formatter = (state: ExpenseRecordType) => state.name;
   filter = new FormControl('');
-  closeResult = "";
+  closeResult: string = "";
 
   constructor(
     private expenseSheetService: ExpenseSheetService,
@@ -86,25 +87,22 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
   openDeleteExpenseRecord(expenseSheetId: string, expenseRecordId: string, content: any){
     this.modalService.open(content, { animation: true, centered: true, ariaLabelledBy: 'modal-basic-title'})
     .result.then((result) => {
-        console.log('Confirm Delete Operation')
         this.confirmExpenseRecordDeletion(expenseSheetId, expenseRecordId);
     }, (reason) => {
       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
     });
   }
 
-  openEditExpenseRecord(expenseRecord: any, content: any) {
-    console.log(expenseRecord);
+  openEditExpenseRecord(expenseRecord: ExpenseRecord, content: any) {
     this.currentExpenseRecord = { 
-      expenseRecordId: expenseRecord._id,
+      expenseRecordId: expenseRecord.expenseRecordId,
       notes: expenseRecord.notes,
       amount: expenseRecord.amount,
       date: expenseRecord.date,
-      expenseCategoryId: expenseRecord.expenseCategory._id,
+      expenseCategory: expenseRecord.expenseCategory,
     }
-    this.modalService.open(content, { animation: true, centered: true, ariaLabelledBy: 'modal-basic-title', injector: expenseRecord})
+    this.modalService.open(content, { animation: true, centered: true, ariaLabelledBy: 'modal-basic-title'})
     .result.then((result) => {
-        console.log('Confirm Update Operation')
         this.confirmExpenseRecordUpdate(expenseRecord);
     }, (reason) => {
       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
@@ -194,7 +192,6 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
   }
 
   private confirmExpenseRecordDeletion(expenseSheetId: string, expenseRecordId: string){
-    console.log(`Expense Sheet ID : ${expenseSheetId} and Expense Record Id : ${expenseRecordId}`);
     const data = this.expenseRecordService.removeExpenseRecord(expenseSheetId, expenseRecordId);
     data.subscribe({
       next: (result: any) => {
@@ -221,18 +218,15 @@ export class ExpenseSheetSelectedViewComponent implements OnInit, OnChanges {
     });
   }
 
-  private confirmExpenseRecordUpdate(expenseRecord: any){
+  private confirmExpenseRecordUpdate(expenseRecord: ExpenseRecord){
     console.log(expenseRecord);
     console.log(this.userExpenseCategories);
   }
 
   private getDismissReason(reason: any): void {
     if (reason === ModalDismissReasons.ESC) {
-      console.log('by pressing ESC');
     } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
-      console.log('by clicking on a backdrop')
     } else {
-      console.log(`with: ${reason}`);
     }
   }
 

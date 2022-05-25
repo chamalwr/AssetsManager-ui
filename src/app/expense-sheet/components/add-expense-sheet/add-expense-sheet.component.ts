@@ -4,6 +4,8 @@ import { ModalDismissReasons, NgbActiveModal, NgbCalendar, NgbDateStruct, NgbMod
 import { DateTime } from 'luxon';
 import { ToastrService } from 'ngx-toastr';
 import { OperatorFunction, Observable, debounceTime, distinctUntilChanged, filter, map } from 'rxjs';
+import { CreateExpenseRecordDto } from 'src/app/assests-manager-common/dto/create-expense-record.dto';
+import { CreateExpenseSheet } from 'src/app/assests-manager-common/dto/create-expense-sheet.dto';
 import { ExpenseCategoryService } from 'src/app/assests-manager-common/service/expense-category.service';
 import { ExpenseSheetService } from 'src/app/assests-manager-common/service/expense-sheet.service';
 import { environment } from 'src/environments/environment';
@@ -52,7 +54,6 @@ export class AddExpenseSheetComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
   }
 
   ngOnDestroy(): void {
@@ -118,7 +119,7 @@ export class AddExpenseSheetComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private ConfirmExpenseSheetCreation(){
-    const expenseRecords = this.temporyExpenseRecords.map(((record) => {
+    const expenseRecords: CreateExpenseRecordDto[] = this.temporyExpenseRecords.map(((record) => {
       return {
         date: record.date,
         notes: record.note,
@@ -126,7 +127,7 @@ export class AddExpenseSheetComponent implements OnInit, OnChanges, OnDestroy {
         expenseCategory: record.expenseCategory._id,
       }
     }));
-    const createExpenseSheetInput = {
+    const createExpenseSheetInput: CreateExpenseSheet = {
       currency: this.selectedCurrency,
       year: this.calenderModel.year,
       month: this.calenderModel.month,
@@ -189,11 +190,8 @@ export class AddExpenseSheetComponent implements OnInit, OnChanges, OnDestroy {
 
   private getDismissReason(reason: any): void {
     if (reason === ModalDismissReasons.ESC) {
-      console.log('by pressing ESC');
     } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
-      console.log('by clicking on a backdrop')
     } else {
-      console.log(`with: ${reason}`);
     }
   }
 

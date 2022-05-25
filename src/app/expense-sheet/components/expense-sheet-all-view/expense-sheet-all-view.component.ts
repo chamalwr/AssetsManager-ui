@@ -3,6 +3,7 @@ import { Component, EventEmitter, OnInit, Output, PipeTransform, Type } from '@a
 import { FormControl } from '@angular/forms';
 import { ModalDismissReasons, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
+import { ExpenseSheetSummary } from 'src/app/assests-manager-common/entity/expense-sheet-summary.entity';
 import { ExpenseSheetService } from 'src/app/assests-manager-common/service/expense-sheet.service';
 import { environment } from 'src/environments/environment';
 
@@ -14,10 +15,10 @@ import { environment } from 'src/environments/environment';
 export class ExpenseSheetAllViewComponent implements OnInit {
 
   @Output() selectedExpenseSheetForDetailedView = new EventEmitter<any>();
-  expenseSheetsSummary$: any[] = [];
+  expenseSheetsSummary$: ExpenseSheetSummary[] = [];
   filter = new FormControl('');
   loading: boolean = false;
-  closeResult = "";
+  closeResult: string = "";
 
   constructor(
     private expenseSheetService: ExpenseSheetService,
@@ -31,8 +32,8 @@ export class ExpenseSheetAllViewComponent implements OnInit {
     this.getExpenseSheetSummary(environment.userId);
   }
 
-  viewSelectedExpenseSheet(expenseSheet: any){
-    this.selectedExpenseSheetForDetailedView.emit(expenseSheet);
+  viewSelectedExpenseSheet(expenseSheetSummary: ExpenseSheetSummary){
+    this.selectedExpenseSheetForDetailedView.emit(expenseSheetSummary);
   }
 
   getExpenseSheetSummary(userId: string){
@@ -72,11 +73,8 @@ export class ExpenseSheetAllViewComponent implements OnInit {
 
   private getDismissReason(reason: any): void {
     if (reason === ModalDismissReasons.ESC) {
-      console.log('by pressing ESC');
     } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
-      console.log('by clicking on a backdrop')
     } else {
-      console.log(`with: ${reason}`);
     }
   }
 
