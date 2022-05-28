@@ -6,9 +6,13 @@ import { ToastrService } from 'ngx-toastr';
 import { OperatorFunction, Observable, debounceTime, distinctUntilChanged, filter, map } from 'rxjs';
 import { CreateExpenseRecordDto } from 'src/app/assests-manager-common/dto/create-expense-record.dto';
 import { CreateExpenseSheet } from 'src/app/assests-manager-common/dto/create-expense-sheet.dto';
+import { ExpenseCategory } from 'src/app/assests-manager-common/entity/expense-category.entity';
 import { ExpenseCategoryService } from 'src/app/assests-manager-common/service/expense-category.service';
 import { ExpenseSheetService } from 'src/app/assests-manager-common/service/expense-sheet.service';
 import { environment } from 'src/environments/environment';
+import { TemporyExpenseRecord } from '../../dto/tempory-expense-record.dto';
+import { v4 as uuidv4 } from 'uuid';
+import { UpdateExpenseRecordDto } from 'src/app/assests-manager-common/dto/update-expense-record.dto';
 
 type ExpenseRecordType = {id: number, name: string};
 
@@ -23,15 +27,22 @@ export class AddExpenseSheetComponent implements OnInit, OnChanges, OnDestroy {
   allowedMinDateRange!: NgbDateStruct;
   allowedMaxDateRange!: NgbDateStruct;
 
-  temporyExpenseRecords: any[] = [];
+  temporyExpenseRecords: TemporyExpenseRecord[] = [];
   temporyExpenseSheetDetails = {};
-  userExpenseCategories: any[] = [];
+  userExpenseCategories: ExpenseCategory[] = [];
   closeResult: string = '';
   selectedCurrency!: string;
   isDateInputLocked: boolean = false;
   loading: boolean = false;
 
   expenseRecordCreateForm = new FormGroup({
+    date: new FormControl(null, [Validators.required]),
+    note: new FormControl(null, [Validators.required, Validators.minLength(3)]),
+    expenseCategory: new FormControl(null, [Validators.required]),
+    amount: new FormControl(null, [Validators.required]),
+  });
+
+  editRecordForm = new FormGroup({
     date: new FormControl(null, [Validators.required]),
     note: new FormControl(null, [Validators.required, Validators.minLength(3)]),
     expenseCategory: new FormControl(null, [Validators.required]),
@@ -46,7 +57,7 @@ export class AddExpenseSheetComponent implements OnInit, OnChanges, OnDestroy {
     private readonly toastr: ToastrService,
     private modalService: NgbModal,
     public modal: NgbActiveModal,
-    private calendar: NgbCalendar
+    private calendar: NgbCalendar,
   ) {}
 
   ngOnInit(): void {
@@ -82,8 +93,9 @@ export class AddExpenseSheetComponent implements OnInit, OnChanges, OnDestroy {
         if(result.status === 'VALID'){
           //Selected month and year is in range of expense sheets month and year
           if(result.value.date.month === this.calenderModel.month && result.value.date.year === this.calenderModel.year){
-            const newExpenseRecordDto = {
-              date: result.value.date.day,
+            const newExpenseRecordDto: TemporyExpenseRecord = {
+              temporyId: uuidv4(),
+              date: result.value.date,
               note: result.value.note,
               amount: Number(result.value.amount),
               expenseCategory: result.value.expenseCategory,
@@ -105,23 +117,62 @@ export class AddExpenseSheetComponent implements OnInit, OnChanges, OnDestroy {
     }else if(this.temporyExpenseRecords.length <= 0){
       //Confirm user wants to create expense sheet without any record in it
       this.modalService.open(savewithoutExpenseRecordModel, { centered: true, ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
-        this.ConfirmExpenseSheetCreation();
+        this.confirmExpenseSheetCreation();
       }, (reason) => {
         this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
       });;
     }else {
       this.modalService.open(content, { centered: true, ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
-        this.ConfirmExpenseSheetCreation();
+        this.confirmExpenseSheetCreation();
       }, (reason) => {
         this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
       });;
     }
   }
 
-  private ConfirmExpenseSheetCreation(){
+  editSelectedExpenseRecord(content: any, expenseRecordTemporyId: string){
+    const expenseRecord = this.temporyExpenseRecords.find((record) => record.temporyId === expenseRecordTemporyId);
+    if(expenseRecord){
+      this.editRecordForm.setValue({
+        date: expenseRecord?.date,
+        note: expenseRecord?.note,
+        expenseCategory: expenseRecord?.expenseCategory,
+        amount: expenseRecord?.amount,
+      });
+      this.modalService.open(content, { centered: true, ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+        if(result.status === 'VALID'){
+          this.temporyExpenseRecords.map((record)=> {
+            if(record.temporyId === expenseRecord.temporyId){
+              record.date = result.value.date,
+              record.note = result.value.note,
+              record.expenseCategory = result.value.expenseCategory,
+              record.amount = result.value.amount
+            }
+          })
+        }
+      }, (reason) => {
+        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+      });
+    }
+  }
+
+  deleteSelectedExpenseRecord(content:any, expenseRecordTemporyId: string){
+    console.log(`Delete this ${expenseRecordTemporyId}`);
+    this.modalService.open(content, { centered: true, ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+      this.confirmTempExpenseRecordDeletion(expenseRecordTemporyId);
+    }, (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });;
+  }
+
+  private confirmTempExpenseRecordDeletion(expenseRecordTemporyId: string){
+    this.temporyExpenseRecords = this.temporyExpenseRecords.filter((record) => record.temporyId !== expenseRecordTemporyId);
+  }
+
+  private confirmExpenseSheetCreation(){
     const expenseRecords: CreateExpenseRecordDto[] = this.temporyExpenseRecords.map(((record) => {
       return {
-        date: record.date,
+        date: record.date.day,
         notes: record.note,
         amount: record.amount,
         expenseCategory: record.expenseCategory._id,
@@ -158,7 +209,7 @@ export class AddExpenseSheetComponent implements OnInit, OnChanges, OnDestroy {
         this.loading = false;
         this.toastr.error('Could not create Expense Sheet Something went wrong!', 'Error Creating Expense Sheet');
       }
-    })
+    });
   }
 
   private getUserExpesneRecords(userId: string){
