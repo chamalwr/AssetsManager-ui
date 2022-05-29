@@ -12,7 +12,6 @@ import { ExpenseSheetService } from 'src/app/assests-manager-common/service/expe
 import { environment } from 'src/environments/environment';
 import { TemporyExpenseRecord } from '../../dto/tempory-expense-record.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { UpdateExpenseRecordDto } from 'src/app/assests-manager-common/dto/update-expense-record.dto';
 
 type ExpenseRecordType = {id: number, name: string};
 
