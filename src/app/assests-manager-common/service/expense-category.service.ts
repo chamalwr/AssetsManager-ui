@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
+import { CreateExpenseCategoryDto } from '../dto/create-expense-category.dto';
+import { UpdateExpenseCategoryDto } from '../dto/update-expense-category.dto';
 import { CREATE_EXPENSE_CATEGORY, DELETE_EXPENSE_CATEGORY, GET_EXPENSE_CATEGORIES, GET_EXPENSE_CATEGORY, UPDATE_EXPENSE_CATEGORY } from '../query/expense-category.query';
 
 @Injectable({
@@ -9,7 +11,6 @@ export class ExpenseCategoryService {
 
   public loading: boolean = false;
   public incomeCategories: any;
-
 
   constructor(private readonly apolloClient: Apollo) { }
 
@@ -35,7 +36,7 @@ export class ExpenseCategoryService {
       return expenseCategory.valueChanges;
   }
 
-  createExpenseCategory(createExpenseCategoryInput: any){
+  createExpenseCategory(createExpenseCategoryInput: CreateExpenseCategoryDto){
       return this.apolloClient.mutate({
           mutation: CREATE_EXPENSE_CATEGORY,
           variables: {
@@ -44,7 +45,7 @@ export class ExpenseCategoryService {
       });
   }
 
-  updateExpenseCategory(id: string, updateExpenseCategoryInput: any){
+  updateExpenseCategory(id: string, updateExpenseCategoryInput: UpdateExpenseCategoryDto){
       return this.apolloClient.mutate({
           mutation: UPDATE_EXPENSE_CATEGORY,
           variables: {
