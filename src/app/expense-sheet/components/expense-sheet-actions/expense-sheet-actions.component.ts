@@ -160,11 +160,8 @@ export class ExpenseSheetActionsComponent implements OnInit, OnChanges {
 
   private getDismissReason(reason: any): void {
     if (reason === ModalDismissReasons.ESC) {
-      console.log('by pressing ESC');
     } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
-      console.log('by clicking on a backdrop')
     } else {
-      console.log(`with: ${reason}`);
     }
   }
 

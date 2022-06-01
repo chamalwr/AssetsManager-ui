@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
+import { CreateExpenseSheet } from '../dto/create-expense-sheet.dto';
+import { UpdateExpenseSheetDto } from '../dto/update-expense-sheet.dto';
 import { CREATE_EXPENSE_SHEET, DELETE_EXPENSE_SHEET, GET_EXPENSE_SHEET, GET_EXPENSE_SHEETS, GET_EXPENSE_SHEETS_BY_YEAR, GET_EXPENSE_SHEETS_SUMMARY, GET_EXPENSE_SHEET_BY_MONTH_AND_YEAR, UPDATE_EXPENSE_SHEET } from '../query/expense-sheet.query';
 
 @Injectable({
@@ -67,7 +69,7 @@ export class ExpenseSheetService {
     return expenseSheets.valueChanges;
   }
 
-  createExpenseSheet(createExpenseSheetDto: any){
+  createExpenseSheet(createExpenseSheetDto: CreateExpenseSheet){
     return this.apolloClient.mutate({
       mutation: CREATE_EXPENSE_SHEET,
       variables: {
@@ -85,7 +87,7 @@ export class ExpenseSheetService {
     });
   }
 
-  updateExpenseSheet(id: string, updateExpenseSheetDto: any){
+  updateExpenseSheet(id: string, updateExpenseSheetDto: UpdateExpenseSheetDto){
     return this.apolloClient.mutate({
       mutation: UPDATE_EXPENSE_SHEET,
       variables: {

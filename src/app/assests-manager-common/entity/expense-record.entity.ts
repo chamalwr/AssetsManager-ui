@@ -1,7 +1,9 @@
+import { ExpenseCategory } from "./expense-category.entity";
+
 export class ExpenseRecord {
-    expenseRecordId!: string;
+    _id!: string;
     notes!: string;
     amount!: number;
     date!: number;
-    expenseCategoryId!: string;
+    expenseCategory!: ExpenseCategory;
 }

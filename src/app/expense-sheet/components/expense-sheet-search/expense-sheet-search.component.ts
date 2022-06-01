@@ -33,7 +33,6 @@ export class ExpenseSheetSearchComponent implements OnInit, OnChanges {
     }else{
       const selectedMonth = this.calenderModel.month;
       const selectedYear = this.calenderModel.year;
-      console.log(`User selected ${selectedMonth} Month and ${selectedYear} as year`);
       this.selectedMonthAndYearEvent.emit({ month: selectedMonth, year: selectedYear });
     }
   }

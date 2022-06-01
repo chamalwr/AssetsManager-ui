@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
+import { CreateExpenseRecordDto } from '../dto/create-expense-record.dto';
+import { UpdateExpenseRecordDto } from '../dto/update-expense-record.dto';
 import { CREATE_EXPENSE_RECORD, DELETE_EXPENSE_RECORD, GET_EXPENSE_RECORD, GET_EXPENSE_RECORDS, UPDATE_EXPENSE_RECORD } from '../query/expense-record.query';
 
 @Injectable({
@@ -9,7 +11,7 @@ export class ExpenseRecordsService {
 
   constructor(private readonly apolloClient: Apollo) { }
 
-  createExpenseRecord(expenseSheetId: string, createExpenseRecordDto: any){
+  createExpenseRecord(expenseSheetId: string, createExpenseRecordDto: CreateExpenseRecordDto){
     return this.apolloClient.mutate({
       mutation: CREATE_EXPENSE_RECORD,
       variables: {
@@ -19,7 +21,7 @@ export class ExpenseRecordsService {
     });
   }
 
-  updateExpenseRecord(expenseSheetId: string, expenseRecordId: string, updateExpenseRecordDto: any){
+  updateExpenseRecord(expenseSheetId: string, expenseRecordId: string, updateExpenseRecordDto: UpdateExpenseRecordDto){
     return this.apolloClient.mutate({
       mutation: UPDATE_EXPENSE_RECORD,
       variables: {

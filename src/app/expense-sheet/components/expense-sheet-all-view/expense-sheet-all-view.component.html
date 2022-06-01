@@ -21,21 +21,21 @@
     <tr *ngFor="let expenseSheet of expenseSheetsSummary$; index as i">
       <th scope="row">{{ i + 1 }}</th>
       <td>
-        {{ expenseSheet.month + "-" +expenseSheet.year }}
+        {{ expenseSheet.month + "-" + expenseSheet.year }}
       </td>
       <td><ngb-highlight [result]="expenseSheet.currency"></ngb-highlight></td>
       <td><ngb-highlight [result]="expenseSheet.totalAmount"></ngb-highlight></td>
       <td>
         <button type="button" class="btn btn-primary" (click)="viewSelectedExpenseSheet(expenseSheet)">View</button>
-        <button type="button" class="btn btn-info" >Edit</button>
-        <button type="button" class="btn btn-warning" (click)="deleteExpenseSheetConfirmation(expenseSheet._id, content)">Delete</button>
+        <button type="button" class="btn btn-info" (click)="editExpenseSheet(expenseSheetdEditModal, expenseSheet)">Edit</button>
+        <button type="button" class="btn btn-warning" (click)="deleteExpenseSheetConfirmation(expenseSheet._id, expenseSheetDeleteModal)">Delete</button>
       </td>
 
     </tr>
     </tbody>
 </table>
 
-<ng-template #content let-modal>
+<ng-template #expenseSheetDeleteModal let-modal>
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">Expense Sheet Deletion</h4>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
@@ -49,5 +49,37 @@
   <div class="modal-footer">
     <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Cancel</button>
     <button type="button" class="btn btn-danger" (click)="modal.close('Ok click')">Ok</button>
+  </div>
+</ng-template>
+
+<!-- Expense Sheet Edit Modal -->
+<ng-template #expenseSheetdEditModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Update Expense Sheet Detail</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="editExpenseSheetForm">
+      <div class="mb-3">
+        <label for="recordDate">Month and Year</label>
+        <div class="input-group">
+          <input id="recordDate" class="form-control" placeholder="yyyy-mm-dd" formControlName="date"
+              name="dp" ngbDatepicker #dp="ngbDatepicker">
+          <button class="btn btn-outline-secondary bi-calendar3" (click)="dp.toggle()" type="button"></button>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="currency">Currency : </label>
+        <div class="input-group">
+          <input id="currency" formControlName="currency" class="form-control" placeholder="" name="USD">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+          <button type="reset" class="btn btn-outline-dark">Clear</button>
+          <button type="submit" [disabled]="editExpenseSheetForm.invalid" class="btn btn-outline-dark" (click)="modal.close(editExpenseSheetForm)">Update</button>
+      </div>
+    </form>
   </div>
 </ng-template>

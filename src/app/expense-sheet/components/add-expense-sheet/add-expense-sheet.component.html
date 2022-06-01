@@ -45,13 +45,13 @@
             <tbody>
                 <tr *ngFor="let expenseRecord of temporyExpenseRecords; index as i">
                     <th scope="row">{{ 1 }}</th>
-                    <td> {{ expenseRecord.date }} </td>
+                    <td> {{ expenseRecord.date.day }} </td>
                     <td> {{ expenseRecord.note }} </td>
                     <td> {{ expenseRecord.expenseCategory.name }} </td>
                     <td> {{ expenseRecord.amount }} </td>
                     <td>
-                        <button type="button" class="btn btn-info">Edit</button>
-                        <button type="button" class="btn btn-warning">Delete</button>
+                        <button type="button" class="btn btn-info" (click)="editSelectedExpenseRecord(editExpenseRecordModal, expenseRecord.temporyId)">Edit</button>
+                        <button type="button" class="btn btn-warning" (click)="deleteSelectedExpenseRecord(deleteTempExpenseRecord, expenseRecord.temporyId)">Delete</button>
                     </td>
                 </tr>
             </tbody>
@@ -118,6 +118,72 @@
     </div>
 </ng-template>
 
+<!-- Edit Expense Record Modal -->
+<ng-template #editExpenseRecordModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Edit Expense Record</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="editRecordForm">
+      <div class="mb-3">
+        <label for="recordDate">Date</label>
+        <div class="input-group">
+          <input id="recordDate" class="form-control" placeholder="yyyy-mm-dd" formControlName="date"
+              [minDate]="allowedMinDateRange" [maxDate]="allowedMaxDateRange" name="dp" ngbDatepicker #dp="ngbDatepicker">
+          <button class="btn btn-outline-secondary bi-calendar3" (click)="dp.toggle()" type="button"></button>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="note">Note : </label>
+        <div class="input-group">
+          <input id="note" formControlName="note" class="form-control" placeholder="" name="note">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="expenseCategory">Expense Category : </label>
+        <div class="input-group">
+          <div class="col">
+            <input id="expenseCategory" type="text" class="form-control"
+              [ngbTypeahead]="search"
+              [inputFormatter]="formatter"
+              [resultFormatter]="formatter"
+              [editable]='false' 
+              formControlName="expenseCategory"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="amount">Amount : </label>
+        <div class="input-group">
+          <input type = "number" id="amount" class="form-control" formControlName="amount" placeholder="" name="amount">
+        </div>
+      </div>
+      <div class="modal-footer">
+          <button type="reset" class="btn btn-outline-dark">Clear</button>
+          <button type="submit" [disabled]="editRecordForm.invalid" class="btn btn-outline-dark" (click)="modal.close(editRecordForm)">Save</button>
+      </div>
+   </form>
+  </div>
+</ng-template>
+
+<!-- Delete Tempory Expense Record -->
+<ng-template #deleteTempExpenseRecord let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-title">Delete Expense Record</h4>
+    <button type="button" class="btn-close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <p>Are you sure you want delete selected Expense Record?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">No</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Ok click')">Yes</button>
+  </div>
+</ng-template>
 
 <!-- Confim Save Expense Sheets -->
 <ng-template #saveExpenseSheet let-modal>

@@ -48,7 +48,7 @@
       <td> {{ expenseRecord.notes }} </td>
       <td> {{ expenseRecord.amount }} </td>
       <td>
-        <button type="button" class="btn btn-info" (click)="openEditExpenseRecord(expenseRecord, expenseRecordEdit)">Edit</button>
+        <button type="button" class="btn btn-info" (click)="openEditExpenseRecord(expenseRecordEditModal, expenseSheet._id, expenseRecord._id, expenseRecord)">Edit</button>
         <button type="button" class="btn btn-warning" (click)="openDeleteExpenseRecord(expenseSheet._id, expenseRecord._id, deleteExpenseRecord)">Delete</button>
       </td>
     </tr>
@@ -74,25 +74,26 @@
 </ng-template>
   
 <!-- Expense Record Edit Modal -->
-<ng-template #expenseRecordEdit let-modal>
+<ng-template #expenseRecordEditModal let-modal>
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">Update Expense Record</h4>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
   </div>
   <div class="modal-body">
-    <form>
+    <form [formGroup]="editExpenseRecordForm">
       <div class="mb-3">
         <label for="recordDate">Date</label>
         <div class="input-group">
-          <input id="recordDate" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #dp="ngbDatepicker">
-          <button class="btn btn-outline-secondary calendar" (click)="dp.toggle()" type="button"></button>
+          <input id="recordDate" class="form-control" placeholder="yyyy-mm-dd" formControlName="date"
+              [minDate]="allowedMinDateRange" [maxDate]="allowedMaxDateRange" name="dp" ngbDatepicker #dp="ngbDatepicker">
+          <button class="btn btn-outline-secondary bi-calendar3" (click)="dp.toggle()" type="button"></button>
         </div>
       </div>
 
       <div class="mb-3">
         <label for="note">Note : </label>
         <div class="input-group">
-          <input id="note" class="form-control" placeholder="" name="note" [(ngModel)]="currentExpenseRecord.notes">
+          <input id="note" formControlName="note" class="form-control" placeholder="" name="note">
         </div>
       </div>
 
@@ -101,13 +102,11 @@
         <div class="input-group">
           <div class="col">
             <input id="expenseCategory" type="text" class="form-control"
-              [(ngModel)]="model"
-              [ngModelOptions]="{ standalone: true }"
               [ngbTypeahead]="search"
               [inputFormatter]="formatter"
               [resultFormatter]="formatter"
               [editable]='false' 
-              [(ngModel)]="currentExpenseRecord.expenseCategoryId"/>
+              formControlName="expenseCategory"/>
           </div>
         </div>
       </div>
@@ -115,12 +114,13 @@
       <div class="mb-3">
         <label for="amount">Amount : </label>
         <div class="input-group">
-          <input id="amount" class="form-control" placeholder="" name="amount" [(ngModel)]="currentExpenseRecord.amount">
+          <input type = "number" id="amount" class="form-control" formControlName="amount" placeholder="" name="amount">
         </div>
       </div>
+      <div class="modal-footer">
+          <button type="reset" class="btn btn-outline-dark">Clear</button>
+          <button type="submit" [disabled]="editExpenseRecordForm.invalid" class="btn btn-outline-dark" (click)="modal.close(editExpenseRecordForm)">Update</button>
+      </div>
     </form>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
   </div>
 </ng-template>
