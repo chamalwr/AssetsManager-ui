@@ -8,10 +8,7 @@ import { CREATE_INCOME_CATEGORY, DELETE_INCOME_CATEGORY, GET_INCOME_CATEGORIES, 
     providedIn: "root"
 })
 export class IncomeCategoryService {
-    public loading: boolean = false;
-    public incomeCategories: any;
-
-
+    
     constructor(private readonly apolloClient: Apollo){}
 
     getAllIncomeCategories(userId: string){
