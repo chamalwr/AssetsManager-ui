@@ -1,1 +1,14 @@
-<p>income-sheet-search works!</p>
+<form class="row row-cols-sm-auto">
+    <div class="col-12">
+      <div class="input-group">
+        <label>Select Year and Month</label>
+        <input class="form-control" placeholder="mm-yyyy"
+            name="dp" [(ngModel)]="calenderModel" ngbDatepicker #d="ngbDatepicker">
+        <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
+      </div>
+      <button class="btn btn-sm btn-outline-primary" (click)="selectToday()">Current Month</button>
+      <button class="btn btn-sm btn-outline-primary" type="reset">Clear</button>
+    </div>
+    <button class="btn btn-primary" type="submit" (click)="search()">Search</button>
+    <button class="btn btn-primary" type="button" (click)="getAllView('ALL_VIEW')">Get All</button>
+</form>

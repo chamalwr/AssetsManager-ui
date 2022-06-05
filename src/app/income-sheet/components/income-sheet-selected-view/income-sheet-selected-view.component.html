@@ -1,1 +1,126 @@
-<p>income-sheet-selected-view works!</p>
+<form>
+    <div class="mb-3 row">
+      <label for="table-filtering-search" class="col-xs-3 col-sm-auto col-form-label">Search :</label>
+      <div class="col-xs-3 col-sm-auto">
+        <input id="table-filtering-search" class="form-control" type="text">
+      </div>
+    </div>
+  </form>
+
+  <div class="mb-3 row">
+    <label for="totalExpenses" class="col-xs-3 col-sm-auto col-form-label">Total Expenses : </label>
+    <div class="col-xs-3 col-sm-auto">
+      <label id="totalExpenses">LKR 10,0000</label>
+    </div>
+
+    <label for="totalIncome" class="col-xs-3 col-sm-auto col-form-label">Total Income : </label>
+    <div class="col-xs-3 col-sm-auto">
+      <label id="totalIncome">{{ incomeSheet.totalAmount? incomeSheet.totalAmount : '0.00'  }}</label>
+    </div>
+
+    <label for="incomeSheetMonth" class="col-xs-3 col-sm-auto col-form-label">Month : </label>
+    <div class="col-xs-3 col-sm-auto">
+      <label id="incomeSheetMonth">{{ incomeSheet.month? incomeSheet.month: 'N/A' }}</label>
+    </div>
+
+    <label for="incomeSheetYear" class="col-xs-3 col-sm-auto col-form-label">Year : </label>
+    <div class="col-xs-3 col-sm-auto">
+      <label id="incomeSheetYear">{{ incomeSheet.year? incomeSheet.year: 'N/A' }}</label>
+    </div>    
+  </div>
+  
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Date</th>
+      <th scope="col">Income Category</th>
+      <th scope="col">Notes</th>
+      <th scope="col">Amount</th>
+      <th scope="col">Options</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let incomeRecord of incomeRecords; index as i">
+      <th scope="row">{{ i + 1 }}</th>
+      <td> {{ incomeRecord.date }}</td>
+      <td> {{ incomeRecord.incomeCategory.name }} </td>
+      <td> {{ incomeRecord.notes }} </td>
+      <td> {{ incomeRecord.amount }} </td>
+      <td>
+        <button type="button" class="btn btn-info" (click)="openEditIncomeRecord(incomeRecordEditModal, incomeSheet._id, incomeRecord.incomeRecordId, incomeRecord)">Edit</button>
+        <button type="button" class="btn btn-warning" (click)="openDeleteIncomeRecord(deleteIncomeRecordModal, incomeSheet._id, incomeRecord.incomeRecordId)">Delete</button>
+      </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Expense Sheet Deletion Confirmation Modal -->
+<ng-template #deleteIncomeRecordModal let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Income Sheet Deletion</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Are you sure you want to delete <span class="text-primary">"John Doe"</span> income sheet?</strong></p>
+      <p><span class="text-primary">Income Sheet</span> and related <span class="text-primary">Income Records</span> will be deleted.
+      <span class="text-danger">This operation can not be undone.</span>
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Cancel</button>
+      <button type="button" class="btn btn-danger" (click)="modal.close('Ok click')">Ok</button>
+    </div>
+</ng-template>
+  
+<!-- Expense Record Edit Modal -->
+<ng-template #incomeRecordEditModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Update Expense Record</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="editIncomeRecordForm">
+      <div class="mb-3">
+        <label for="recordDate">Date</label>
+        <div class="input-group">
+          <input id="recordDate" class="form-control" placeholder="yyyy-mm-dd" formControlName="date"
+              [minDate]="allowedMinDateRange" [maxDate]="allowedMaxDateRange" name="dp" ngbDatepicker #dp="ngbDatepicker">
+          <button class="btn btn-outline-secondary bi-calendar3" (click)="dp.toggle()" type="button"></button>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="note">Note : </label>
+        <div class="input-group">
+          <input id="note" formControlName="note" class="form-control" placeholder="" name="note">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="expenseCategory">Expense Category : </label>
+        <div class="input-group">
+          <div class="col">
+            <input id="expenseCategory" type="text" class="form-control"
+              [ngbTypeahead]="search"
+              [inputFormatter]="formatter"
+              [resultFormatter]="formatter"
+              [editable]='false' 
+              formControlName="expenseCategory"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="amount">Amount : </label>
+        <div class="input-group">
+          <input type = "number" id="amount" class="form-control" formControlName="amount" placeholder="" name="amount">
+        </div>
+      </div>
+      <div class="modal-footer">
+          <button type="reset" class="btn btn-outline-dark">Clear</button>
+          <button type="submit" [disabled]="editIncomeRecordForm.invalid" class="btn btn-outline-dark" (click)="modal.close(editIncomeRecordForm)">Update</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

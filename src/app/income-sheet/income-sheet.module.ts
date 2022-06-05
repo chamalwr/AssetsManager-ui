@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
 
 import { IncomeSheetRoutingModule } from './income-sheet-routing.module';
 import { IncomeSheetComponent } from './income-sheet.component';
@@ -8,6 +8,9 @@ import { IncomeSheetActionsComponent } from './components/income-sheet-actions/i
 import { IncomeSheetAllViewComponent } from './components/income-sheet-all-view/income-sheet-all-view.component';
 import { IncomeSheetSearchComponent } from './components/income-sheet-search/income-sheet-search.component';
 import { IncomeSheetSelectedViewComponent } from './components/income-sheet-selected-view/income-sheet-selected-view.component';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgbActiveModal, NgbDatepickerModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
@@ -21,8 +24,13 @@ import { IncomeSheetSelectedViewComponent } from './components/income-sheet-sele
   ],
   imports: [
     CommonModule,
-    IncomeSheetRoutingModule
+    IncomeSheetRoutingModule,
+    HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgbDatepickerModule,
+    NgbModule,
   ],
-  exports: []
+  providers: [DecimalPipe, CurrencyPipe, NgbActiveModal]
 })
 export class IncomeSheetModule { }
