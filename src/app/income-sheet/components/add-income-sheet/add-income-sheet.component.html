@@ -1,1 +1,217 @@
-<p>add-income-sheet works!</p>
+<nav class="navbar navbar-light bg-light">
+    <button type="button" class="btn btn-outline-primary" routerLink="/income-sheet">Back</button>
+    <span class="navbar-brand mb-1 h1">Add Income Sheet</span>
+</nav>
+
+<div>
+    <form class="row row-cols-sm-auto">
+        <div class="col-12">
+            <div class="input-group">
+              <label>Select Year and Month : </label>
+              <input class="form-control" placeholder="mm-yyyy"
+                  name="dp" [(ngModel)]="calenderModel" [disabled]="isDateInputLocked" ngbDatepicker #d="ngbDatepicker">
+              <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
+            </div>
+            <button class="btn btn-sm btn-outline-primary" (click)="selectToday()">Current Month</button>
+            <button class="btn btn-sm btn-outline-primary" type="reset" (click)="resetFormInputDataStatus()">Clear</button>
+        </div>
+
+        <div class="col-12">
+            <div class="input-group">
+              <label>Select Currency : </label>
+              <input class="form-control currency-input-upper" [(ngModel)]="selectedCurrency" placeholder="USD" name="currency" type="text">
+            </div>
+        </div>
+    </form>
+        
+    <div class="mb-3 row">
+        <div class="col-xs-3 col-sm-auto">
+            <button type="button" class="btn btn-info" (click)="openAddIncomeRecordModal(addIncomeRecordModal)">Add New Record</button>
+        </div>
+    </div>
+
+    <form class="row row-cols-sm-auto">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Note</th>
+                    <th scope="col">Income Category</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Options</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let incomeRecord of temporyIncomeRecords; index as i">
+                    <th scope="row">{{ 1 }}</th>
+                    <td> {{ incomeRecord.date.day }} </td>
+                    <td> {{ incomeRecord.note }} </td>
+                    <td> {{ incomeRecord.incomeCategory.name }} </td>
+                    <td> {{ incomeRecord.amount }} </td>
+                    <td>
+                        <button type="button" class="btn btn-info" (click)="editSelectedIncomeRecord(editIncomeRecordModal, incomeRecord.temporyId)">Edit</button>
+                        <button type="button" class="btn btn-warning" (click)="deleteSelectedIncomeRecord(deleteTempIncomeRecord, incomeRecord.temporyId)">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+                
+        <div class="mb-3 row">
+            <div class="col-xs-3 col-sm-auto">
+                <button type="button" class="btn btn-outline-dark" (click)="clearAllIncomeRecords()">Clear All</button>
+                <button type="button" class="btn btn-info" (click)="openSaveIncomeSheetConfirmation(saveIncomeSheet, saveIncomeSheetWithoutRecords)">Save All</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Add New Income Record Modal -->
+<ng-template #addIncomeRecordModal let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Add Income Record</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="incomeRecordCreateForm">
+        <div class="mb-3">
+          <label for="recordDate">Date</label>
+          <div class="input-group">
+            <input id="recordDate" class="form-control" placeholder="yyyy-mm-dd" formControlName="date"
+                [minDate]="allowedMinDateRange" [maxDate]="allowedMaxDateRange" name="dp" ngbDatepicker #dp="ngbDatepicker">
+            <button class="btn btn-outline-secondary calendar" (click)="dp.toggle()" type="button"></button>
+          </div>
+        </div>
+  
+        <div class="mb-3">
+          <label for="note">Note : </label>
+          <div class="input-group">
+            <input id="note" formControlName="note" class="form-control" placeholder="" name="note">
+          </div>
+        </div>
+  
+        <div class="mb-3">
+          <label for="incomeCategory">Income Category : </label>
+          <div class="input-group">
+            <div class="col">
+              <input id="incomeCategory" type="text" class="form-control"
+                [ngbTypeahead]="search"
+                [inputFormatter]="formatter"
+                [resultFormatter]="formatter"
+                [editable]='false' 
+                formControlName="incomeCategory"/>
+            </div>
+          </div>
+        </div>
+  
+        <div class="mb-3">
+          <label for="amount">Amount : </label>
+          <div class="input-group">
+            <input type = "number" id="amount" class="form-control" formControlName="amount" placeholder="" name="amount">
+          </div>
+        </div>
+        <div class="modal-footer">
+            <button type="reset" class="btn btn-outline-dark">Clear</button>
+            <button type="submit" [disabled]="incomeRecordCreateForm.invalid" class="btn btn-outline-dark" (click)="modal.close(incomeRecordCreateForm)">Save</button>
+        </div>
+     </form>
+    </div>
+</ng-template>
+
+<!-- Edit Income Record Modal -->
+<ng-template #editIncomeRecordModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Edit Income Record</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="editRecordForm">
+      <div class="mb-3">
+        <label for="recordDate">Date</label>
+        <div class="input-group">
+          <input id="recordDate" class="form-control" placeholder="yyyy-mm-dd" formControlName="date"
+              [minDate]="allowedMinDateRange" [maxDate]="allowedMaxDateRange" name="dp" ngbDatepicker #dp="ngbDatepicker">
+          <button class="btn btn-outline-secondary bi-calendar3" (click)="dp.toggle()" type="button"></button>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="note">Note : </label>
+        <div class="input-group">
+          <input id="note" formControlName="note" class="form-control" placeholder="" name="note">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="incomeCategory">Income Category : </label>
+        <div class="input-group">
+          <div class="col">
+            <input id="incomeCategory" type="text" class="form-control"
+              [ngbTypeahead]="search"
+              [inputFormatter]="formatter"
+              [resultFormatter]="formatter"
+              [editable]='false' 
+              formControlName="incomeCategory"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="amount">Amount : </label>
+        <div class="input-group">
+          <input type = "number" id="amount" class="form-control" formControlName="amount" placeholder="" name="amount">
+        </div>
+      </div>
+      <div class="modal-footer">
+          <button type="reset" class="btn btn-outline-dark">Clear</button>
+          <button type="submit" [disabled]="editRecordForm.invalid" class="btn btn-outline-dark" (click)="modal.close(editRecordForm)">Save</button>
+      </div>
+   </form>
+  </div>
+</ng-template>
+
+<!-- Delete Tempory Income Record -->
+<ng-template #deleteTempIncomeRecord let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-title">Delete Income Record</h4>
+    <button type="button" class="btn-close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <p>Are you sure you want delete selected Income Record?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">No</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Ok click')">Yes</button>
+  </div>
+</ng-template>
+
+<!-- Confim Save Income Sheets -->
+<ng-template #saveIncomeSheet let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-title">Save Income Sheet</h4>
+      <button type="button" class="btn-close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure you want to crete new income sheet with current view?</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">No</button>
+      <button type="button" class="btn btn-danger" (click)="modal.close('Ok click')">Yes</button>
+    </div>
+</ng-template>
+
+<!-- Confirm Save Without Income Records -->
+<ng-template #saveIncomeSheetWithoutRecords let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-title">Save Income Sheet without Income Records</h4>
+    <button type="button" class="btn-close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <p>Are you sure you want to crete new income sheet without any Income Records?</p>
+    <p>This will only create Empty income Sheet</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">No</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Ok click')">Yes</button>
+  </div>
+</ng-template>

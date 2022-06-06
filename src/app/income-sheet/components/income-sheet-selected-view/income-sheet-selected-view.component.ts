@@ -32,12 +32,13 @@ export class IncomeSheetSelectedViewComponent implements OnInit, OnChanges {
     _id: '',
     month: 'N/A',
     year: 'N/A',
+    currency: 'N/A',
     totalAmount: '0.00',
     totalIncome: '0.00'
   };
 
   currentIncomeRecord: IncomeRecord = {
-    incomeRecordId: '',
+    _id: '',
     date: 0,
     notes: '',
     amount: 0.00,
@@ -63,6 +64,7 @@ export class IncomeSheetSelectedViewComponent implements OnInit, OnChanges {
     incomeCategory: new FormControl(null, [Validators.required]),
     amount: new FormControl(null, [Validators.required]),
   });
+
   constructor(
     private readonly incomeSheetService: IncomeSheetService,
     private readonly incomeRecordService: IncomeRecordService,
@@ -75,7 +77,7 @@ export class IncomeSheetSelectedViewComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnInit(): void {
-      //Load current month and years exense sheet
+      //Load current month and years income sheet
       if(this.selectedMonthAndYear){
         this.getIncomeSheetForSelectedPeriod(this.userId, this.selectedMonthAndYear.month, this.selectedMonthAndYear.year, true);
       }else {
@@ -107,6 +109,7 @@ export class IncomeSheetSelectedViewComponent implements OnInit, OnChanges {
               _id: this.incomeSheet._id,
               month: this.incomeSheet.month,
               year: this.incomeSheet.year,
+              currency: this.incomeSheet.currency,
               totalAmount: this.incomeSheet.totalAmount,
               totalIncome: '0.00'
             }
@@ -133,6 +136,7 @@ export class IncomeSheetSelectedViewComponent implements OnInit, OnChanges {
               _id: '',
               month: 'N/A',
               year: 'N/A',
+              currency: 'N/A',
               totalAmount: '0.00',
               totalIncome: '0.00'
             };
@@ -145,6 +149,7 @@ export class IncomeSheetSelectedViewComponent implements OnInit, OnChanges {
               _id: '',
               month: 'N/A',
               year: 'N/A',
+              currency: 'N/A',
               totalAmount: '0.00',
               totalIncome: '0.00'
             };
@@ -163,6 +168,7 @@ export class IncomeSheetSelectedViewComponent implements OnInit, OnChanges {
           _id: '',
           month: 'N/A',
           year: 'N/A',
+          currency: 'N/A',
           totalAmount: '0.00',
           totalIncome: '0.00'
         };

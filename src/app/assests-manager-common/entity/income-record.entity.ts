@@ -1,7 +1,7 @@
 import { IncomeCategory } from "./income-category.entity";
 
 export class IncomeRecord {
-    incomeRecordId!: string;
+    _id!: string;
     date!: number;
     notes!: string;
     amount!: number;

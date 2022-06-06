@@ -1,1 +1,85 @@
-<p>income-sheet-all-view works!</p>
+<form>
+    <div class="mb-3 row">
+      <label for="table-filtering-search" class="col-xs-3 col-sm-auto col-form-label">Search :</label>
+      <div class="col-xs-3 col-sm-auto">
+        <input id="table-filtering-search" class="form-control" type="text">
+      </div>
+    </div>
+  </form>
+  
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Month - Year</th>
+      <th scope="col">Currency</th>
+      <th scope="col">Total Expenses</th>
+      <th scope="col">Options</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let incomeSheet of incomeSheetsSummary; index as i">
+      <th scope="row">{{ i + 1 }}</th>
+      <td>
+        {{ incomeSheet.month + "-" + incomeSheet.year }}
+      </td>
+      <td><ngb-highlight [result]="incomeSheet.currency"></ngb-highlight></td>
+      <td><ngb-highlight [result]="incomeSheet.totalAmount"></ngb-highlight></td>
+      <td>
+        <button type="button" class="btn btn-primary" (click)="viewSelectedIncomeSheet(incomeSheet)">View</button>
+        <button type="button" class="btn btn-info" (click)="editIncomeSheet(incomeSheetdEditModal, incomeSheet)">Edit</button>
+        <button type="button" class="btn btn-warning" (click)="deleteIncomeSheetConfirmation(incomeSheetDeleteModal, incomeSheet._id)">Delete</button>
+      </td>
+
+    </tr>
+    </tbody>
+</table>
+
+<ng-template #incomeSheetDeleteModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Income Sheet Deletion</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <p><strong>Are you sure you want to delete <span class="text-primary">"John Doe"</span> income sheet?</strong></p>
+    <p><span class="text-primary">Income Sheet</span> and related <span class="text-primary">Income Records</span> will be deleted.
+    <span class="text-danger">This operation can not be undone.</span>
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Cancel</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Ok click')">Ok</button>
+  </div>
+</ng-template>
+
+<!-- Income Sheet Edit Modal -->
+<ng-template #incomeSheetdEditModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Update Income Sheet Detail</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="editIncomeSheetForm">
+      <div class="mb-3">
+        <label for="recordDate">Month and Year</label>
+        <div class="input-group">
+          <input id="recordDate" class="form-control" placeholder="yyyy-mm-dd" formControlName="date"
+              name="dp" ngbDatepicker #dp="ngbDatepicker">
+          <button class="btn btn-outline-secondary bi-calendar3" (click)="dp.toggle()" type="button"></button>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="currency">Currency : </label>
+        <div class="input-group">
+          <input id="currency" formControlName="currency" class="form-control" placeholder="" name="USD">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+          <button type="reset" class="btn btn-outline-dark">Clear</button>
+          <button type="submit" [disabled]="editIncomeSheetForm.invalid" class="btn btn-outline-dark" (click)="modal.close(editIncomeSheetForm)">Update</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

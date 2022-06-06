@@ -56,7 +56,7 @@ export class IncomeSheetActionsComponent implements OnInit, OnChanges {
     if(changes['currentIncomeSheet']){
       const changedValues = changes['currentIncomeSheet'].currentValue;
       if(changedValues?._id){
-        this.currentIncomeSheet = changedValues._id;
+        this.currentIncomeSheetId = changedValues._id;
         const lastDayOfSelectedMonth = DateTime.local(Number(changedValues.year), Number(changedValues.month)).daysInMonth;
         this.allowedMinDateRange = { year: Number(changedValues.year), month: Number(changedValues.month), day: 1}
         this.allowedMaxDateRange = { year: Number(changedValues.year), month: Number(changedValues.month), day: lastDayOfSelectedMonth};
@@ -65,17 +65,18 @@ export class IncomeSheetActionsComponent implements OnInit, OnChanges {
   }
 
   addNewIncomeRecord(addIncomeRecordModal: any){
+    console.log(this.currentIncomeSheetId);
     if(this.currentIncomeSheetId){
       this.modalService.open(addIncomeRecordModal, { animation: true, centered: true, ariaLabelledBy: 'modal-basic-title'})
       .result.then((result) => {
         if(result.status === 'VALID'){
-          //Selected month and year is in range of expense sheets month and year
+          //Selected month and year is in range of income sheets month and year
           if(result.value.date.month === this.currentIncomeSheet.month && result.value.date.year === this.currentIncomeSheet.year){
             const newIncomeRecordDto: CreateIncomeRecordDto = {
               date: result.value.date.day,
               notes: result.value.note,
               amount: Number(result.value.amount),
-              incomeCategory: result.value.expenseCategory._id,
+              incomeCategory: result.value.incomeCategory._id,
             }
            this.confirmAddingNewIncomeRecord(this.currentIncomeSheetId, newIncomeRecordDto);
           }
@@ -108,7 +109,7 @@ export class IncomeSheetActionsComponent implements OnInit, OnChanges {
           if(result.data.createIncomeRecord && result.data.createIncomeRecord['__typename'] === 'IncomeSheet' || result.data.createIncomeRecord['__typename'] === 'IncomeRecord'){
             this.loading = false;
             const createdIncomeRecord = result.data.createIncomeRecord;
-            this.toastr.success(`Expense record for ${createdIncomeRecord.notes} is created`, `Expense Record Created`);
+            this.toastr.success(`Income record for ${createdIncomeRecord.notes} is created`, `Income Record Created`);
             setInterval(() => {
               window.location.reload();
             }, 2000);

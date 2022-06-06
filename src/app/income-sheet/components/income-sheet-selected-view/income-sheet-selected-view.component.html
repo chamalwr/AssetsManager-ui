@@ -48,8 +48,8 @@
       <td> {{ incomeRecord.notes }} </td>
       <td> {{ incomeRecord.amount }} </td>
       <td>
-        <button type="button" class="btn btn-info" (click)="openEditIncomeRecord(incomeRecordEditModal, incomeSheet._id, incomeRecord.incomeRecordId, incomeRecord)">Edit</button>
-        <button type="button" class="btn btn-warning" (click)="openDeleteIncomeRecord(deleteIncomeRecordModal, incomeSheet._id, incomeRecord.incomeRecordId)">Delete</button>
+        <button type="button" class="btn btn-info" (click)="openEditIncomeRecord(incomeRecordEditModal, incomeSheet._id, incomeRecord._id, incomeRecord)">Edit</button>
+        <button type="button" class="btn btn-warning" (click)="openDeleteIncomeRecord(deleteIncomeRecordModal, incomeSheet._id, incomeRecord._id)">Delete</button>
       </td>
     </tr>
     </tbody>

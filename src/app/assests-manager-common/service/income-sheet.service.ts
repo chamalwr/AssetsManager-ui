@@ -44,7 +44,7 @@ export class IncomeSheetService {
     return incomeSheetSub.valueChanges;
   }
 
-  getIncomeSheetsByMonthAndYear(userId: string, year: number, month: number) {
+  getIncomeSheetsByMonthAndYear(userId: string, month: number, year: number) {
     const incomeSheetByPeriodSub = this.apolloClient.watchQuery({
       query: GET_INCOME_SHEET_BY_MONTH_AND_YEAR,
       variables: {

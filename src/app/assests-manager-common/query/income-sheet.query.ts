@@ -156,7 +156,7 @@ export const GET_INCOME_SHEETS_BY_YEAR = gql`
 
 export const CREATE_INCOME_SHEET = gql`
     mutation createIncomeSheet($createIncomeSheetInput: CreateIncomeSheetInput!){
-        createIncomeSheet(createIncomeSheet: $createIncomeSheet){
+        createIncomeSheet(createIncomeSheetInput: $createIncomeSheetInput){
             __typename
             ... on IncomeSheet {
                 _id
