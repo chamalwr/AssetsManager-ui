@@ -1,0 +1,37 @@
+<nav class="navbar navbar-light bg-light">
+    <span class="navbar-brand mb-1 h1">My Expense Sheets</span>
+</nav>
+
+<amgr-expense-sheet-search 
+    (selectedMonthAndYearEvent)="changeToSelectedView($event)" 
+    (switchViewEvent)="changeToAllView($event)"
+>
+</amgr-expense-sheet-search>
+
+<hr>
+
+<amgr-expense-sheet-actions 
+    [isDeleteCurrentSheetDisabled]="deleteCurrentExpenseSheetButton"
+    [currentExpenseSheet]="currentlySelectedExpenseSheet"
+    [userExpenseCategories]="userExpenseCategories"
+>
+</amgr-expense-sheet-actions>
+
+<hr>
+
+<p *ngIf="currentView === 'SELECTED_VIEW'">
+    <amgr-expense-sheet-selected-view 
+        [selectedMonthAndYear]="selectedPeriod" 
+        [userExpenseCategories]="userExpenseCategories"
+        (isDeleteSheetButtonDisabled)="disableDeleteButton($event)"
+        (currentExpenseSheetInfo)="getCurrentlySelectedExpenseSheetDetail($event)"
+    >
+    </amgr-expense-sheet-selected-view>
+</p>
+
+<p *ngIf="currentView === 'ALL_VIEW'">
+    <amgr-expense-sheet-all-view 
+        (selectedExpenseSheetForDetailedView)="getCurrentlySelectedExpenseSheetDetail($event)"
+    >
+    </amgr-expense-sheet-all-view>
+</p>
